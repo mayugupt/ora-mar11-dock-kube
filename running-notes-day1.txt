@@ -338,3 +338,265 @@ PING google.com (216.58.200.142) 56(84) bytes of data.
 64 bytes from maa05s10-in-f14.1e100.net (216.58.200.142): icmp_seq=1 ttl=53 time=81.4 ms
 64 bytes from maa05s10-in-f14.1e100.net (216.58.200.142): icmp_seq=2 ttl=53 time=78.7 ms
 ^C
+
+
+
+------------------------------------------------------------------
+/home/docker> docker image history nginx:1.14
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+e706cb01fa6b        6 days ago          /bin/sh -c #(nop)  CMD ["nginx" "-g" "daem...   0B      
+<missing>           6 days ago          /bin/sh -c #(nop)  STOPSIGNAL SIGTERM           0B      
+<missing>           6 days ago          /bin/sh -c #(nop)  EXPOSE 80                    0B      
+<missing>           6 days ago          /bin/sh -c ln -sf /dev/stdout /var/log/ngi...   22B     
+<missing>           6 days ago          /bin/sh -c set -x  && apt-get update  && a...   53.8MB  
+<missing>           6 days ago          /bin/sh -c #(nop)  ENV NJS_VERSION=1.14.2....   0B      
+<missing>           6 days ago          /bin/sh -c #(nop)  ENV NGINX_VERSION=1.14....   0B      
+<missing>           6 days ago          /bin/sh -c #(nop)  LABEL maintainer=NGINX ...   0B      
+<missing>           6 days ago          /bin/sh -c #(nop)  CMD ["bash"]                 0B      
+<missing>           6 days ago          /bin/sh -c #(nop) ADD file:5ea7dfe8c8bc87e...   55.3MB  
+
+/home/docker>
+
+/home/docker> docker image history nginx:alpine
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+32a037976344        3 days ago          /bin/sh -c #(nop)  CMD ["nginx" "-g" "daem...   0B      
+<missing>           3 days ago          /bin/sh -c #(nop)  STOPSIGNAL SIGTERM           0B      
+<missing>           3 days ago          /bin/sh -c #(nop)  EXPOSE 80                    0B      
+<missing>           3 days ago          /bin/sh -c #(nop) COPY file:ebf4f0eb33621c...   1.09kB  
+<missing>           3 days ago          /bin/sh -c #(nop) COPY file:4c82b9f10b84c5...   643B    
+<missing>           3 days ago          /bin/sh -c GPG_KEYS=B0F4253373F8F6F510D421...   10.6MB  
+<missing>           3 days ago          /bin/sh -c #(nop)  ENV NGINX_VERSION=1.15.9     0B      
+<missing>           3 days ago          /bin/sh -c #(nop)  LABEL maintainer=NGINX ...   0B      
+<missing>           3 days ago          /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B      
+<missing>           3 days ago          /bin/sh -c #(nop) ADD file:88875982b0512a9...   5.53MB  
+
+/home/docker>
+
+/home/docker> docker image ls
+REPOSITORY                                                       TAG                 IMAGE ID            CREATED             SIZE
+nginx-ping                                                       latest              1b0a35894d1f        About an hour ago   128MB
+nginx                                                            alpine              32a037976344        3 days ago          16.1MB
+registry                                                         2                   f32a97de94e1        3 days ago          25.8MB
+adityaprabhakara/alasdf                                          3                   3ceae2ee17c2        5 days ago          10.4MB
+127.0.0.1:5000/al-apache                                         3                   3ceae2ee17c2        5 days ago          10.4MB
+pinger                                                           latest              e2f5c269c85f        5 days ago          5.53MB
+app                                                              1                   36d8d73c6780        6 days ago          10.4MB
+app                                                              latest              36d8d73c6780        6 days ago          10.4MB
+nginx                                                            1.14                e706cb01fa6b        6 days ago          109MB
+nginx                                                            1                   881bd08c0b08        6 days ago          109MB
+nginx                                                            latest              881bd08c0b08        6 days ago          109MB
+alap                                                             4                   f69208970b36        13 days ago         11.7MB
+alap                                                             latest              f69208970b36        13 days ago         11.7MB
+alap                                                             3                   b70e246237d6        13 days ago         11.7MB
+akrb05/app                                                       1                   e532bddfcfdb        13 days ago         10.4MB
+adityaprabhakara/app                                             1                   b2d4db48377b        13 days ago         11.7MB
+alap                                                             2                   d58810f44044        13 days ago         11.7MB
+alap                                                             1                   da090e1505f6        13 days ago         10.4MB
+alpine-alpache                                                   latest              5d6cb3da3abe        13 days ago         10.4MB
+gcr.io/kubernetes-helm/tiller                                    v2.13.0-rc.1        3df95e340abd        3 weeks ago         82.1MB
+ghost                                                            1-alpine            4afbb5470d6c        4 weeks ago         450MB
+mysql                                                            5.7                 e47e309f72c8        4 weeks ago         372MB
+alpine                                                           3.9                 caf27325b298        5 weeks ago         5.53MB
+alpine                                                           latest              caf27325b298        5 weeks ago         5.53MB
+k8s.gcr.io/heapster-amd64                                        v1.5.3              f57c75cd7b0a        10 months ago       75.3MB
+prom/prometheus                                                  v2.1.0              c8ecf7c719c1        13 months ago       112MB
+gcr.io/google_containers/metrics-server-amd64                    v0.2.1              9801395070f3        14 months ago       42.5MB
+k8s.gcr.io/kubernetes-dashboard-amd64                            v1.8.1              e94d2f21bc0c        15 months ago       121MB
+k8s.gcr.io/heapster-amd64                                        v1.5.0              86a0ddc3a8c2        15 months ago       75.3MB
+quay.io/kubernetes-ingress-controller/nginx-ingress-controller   0.9.0               e56d6a14283a        15 months ago       190MB
+gcr.io/google-containers/kube-addon-manager                      v6.5                d166ffa9201a        16 months ago       79.5MB
+k8s.gcr.io/defaultbackend                                        1.4                 846921f0fe0e        16 months ago       4.84MB
+k8s.gcr.io/k8s-dns-sidecar-amd64                                 1.14.5              fed89e8b4248        17 months ago       41.8MB
+k8s.gcr.io/k8s-dns-kube-dns-amd64                                1.14.5              512cd7425a73        17 months ago       49.4MB
+k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64                           1.14.5              459944ce8cc4        17 months ago       41.4MB
+k8s.gcr.io/heapster-influxdb-amd64                               v1.3.3              577260d221db        18 months ago       12.5MB
+k8s.gcr.io/heapster-grafana-amd64                                v4.4.3              8cb3de219af7        18 months ago       152MB
+gcr.io/google_containers/pause-amd64                             3.0                 99e59f495ffa        2 years ago         747kB
+gcr.io/google_containers/hpa-example                             latest              4ca4c13a6d7c        3 years ago         481MB
+
+/home/docker>
+
+/home/docker> docker image inspect nginx:alpine
+[
+    {
+        "Id": "sha256:32a03797634470821baafbbaa0c3feca63c3c63576415f71ecc8613c593d695c",
+        "RepoTags": [
+            "nginx:alpine"
+        ],
+        "RepoDigests": [
+            "nginx@sha256:55390addbb1a2b82e6ffabafd72e0f5dfbc8f86c2e7d9f41fb914cca537bd500"
+        ],
+        "Parent": "",
+        "Comment": "",
+        "Created": "2019-03-08T03:05:16.991968397Z",
+        "Container": "7665c5a8988b533f114ecdaeddac47f5639ca0293c981c0d8862ebdff0392bcc",
+        "ContainerConfig": {
+            "Hostname": "7665c5a8988b",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.15.9"
+            ],
+            "Cmd": [
+                "/bin/sh",
+                "-c",
+                "#(nop) ",
+                "CMD [\"nginx\" \"-g\" \"daemon off;\"]"
+            ],
+            "ArgsEscaped": true,
+            "Image": "sha256:bcf99c18e75c246616318b26d0b98e05ab7b26a0bf9548e501b37329a35a175f",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGTERM"
+        },
+        "DockerVersion": "18.06.1-ce",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.15.9"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "ArgsEscaped": true,
+            "Image": "sha256:bcf99c18e75c246616318b26d0b98e05ab7b26a0bf9548e501b37329a35a175f",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGTERM"
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 16083956,
+        "VirtualSize": 16083956,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/0773fed2cbf6b68c67fd3178db233143b4fd62e8dc942cdd8c7e3c531ba7067d/diff:/var/lib/docker/overlay2/99387d3c270df18c258dabd05a182465b1cd789adbe3b3ac72d528dd67a74236/diff:/var/lib/docker/overlay2/583d38ab04de3c58061005480275361c5923034b1046dcfa1944de7aac71978d/diff",
+                "MergedDir": "/var/lib/docker/overlay2/f98c5b6f120b8dbbfde700ee02d0b628cc2bdb00e7d721fb05b4b66aa9bf21ae/merged",
+                "UpperDir": "/var/lib/docker/overlay2/f98c5b6f120b8dbbfde700ee02d0b628cc2bdb00e7d721fb05b4b66aa9bf21ae/diff",
+                "WorkDir": "/var/lib/docker/overlay2/f98c5b6f120b8dbbfde700ee02d0b628cc2bdb00e7d721fb05b4b66aa9bf21ae/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:bcf2f368fe234217249e00ad9d762d8f1a3156d60c442ed92079fa5b120634a1",
+                "sha256:f0eec09e392be14fae9c8136c54423e20e155c201f00caa8b30b17125e074a92",
+                "sha256:5a5c0a97649d547b6ffd22ef33e03a2f1ac7d6c9395a3777392cceae286c8f7b",
+                "sha256:4a81df411d7f6a01051da244e8e40b2423ff791cce1a2d88d74e9b3b7b37b4da"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "0001-01-01T00:00:00Z"
+        }
+    }
+]
+
+/home/docker>
+
+/home/docker> docker image save nginx:alpine -o nginx-alpine
+
+/home/docker> ls
+nginx-alpine
+
+/home/docker> mv nginx-alpine.tar
+mv: missing destination file operand after 'nginx-alpine.tar'
+Try 'mv --help' for more information.
+
+/home/docker> mv nginx-alpine nginx-alpine.tar
+
+/home/docker> ls
+nginx-alpine.tar
+
+/home/docker> mv nginx-alpine.tar /c/Users/Dell\ lap/docker-workshop/
+
+/home/docker> docker image ls nginx-ping
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx-ping          latest              1b0a35894d1f        2 hours ago         128MB
+
+/home/docker>
+
+/home/docker> docker image ls nginx-ping
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx-ping          latest              1b0a35894d1f        2 hours ago         128MB
+
+/home/docker> docker image push nginx-ping
+The push refers to a repository [docker.io/library/nginx-ping]
+f91ef4078c53: Preparing
+3e9eb35b1c23: Preparing
+c59b3ca455e3: Preparing
+6744ca1b1190: Preparing
+denied: requested access to the resource is denied
+
+/home/docker> docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: adityaprabhakara
+Password:
+Login Succeeded
+
+/home/docker> docker image push nginx-ping
+The push refers to a repository [docker.io/library/nginx-ping]
+f91ef4078c53: Preparing
+3e9eb35b1c23: Preparing
+c59b3ca455e3: Preparing
+6744ca1b1190: Preparing
+denied: requested access to the resource is denied
+
+/home/docker> docker image push adityaprabhakara/nginx-ping
+
+/home/docker> docker image ls nginx-ping
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx-ping          latest              1b0a35894d1f        2 hours ago         128MB
+
+/home/docker> #docker commit 2b58cd023552 nginx-ping
+
+/home/docker> docker image tag nginx-ping:latest adityaprabhakara/nginx-ping:latest
+
+/home/docker> docker image ls | grep nginx-ping
+adityaprabhakara/nginx-ping                                      latest              1b0a35894d1f        2 hours ago         128MB
+nginx-ping                                                       latest              1b0a35894d1f        2 hours ago         128MB
+
+/home/docker> docker image push adityaprabhakara/nginx-ping
+The push refers to a repository [docker.io/adityaprabhakara/nginx-ping]
+f91ef4078c53: Pushed
+3e9eb35b1c23: Pushed
+c59b3ca455e3: Pushed
+6744ca1b1190: Pushed
+Patch https://registry-1.docker.io/v2/adityaprabhakara/nginx-ping/blobs/uploads/979eb2b1-f68f-4ba0-9721-d86da921bce1?_state=4dHntVSe8SscuYmF3zYsHdGuqZu_pGzx4ufh_W9DZUt7Ik5hbWUiOiJhZGl0eWFwcmFiaGFrYXJhL25naW54LXBpbmciLCJVVUlEIjoiOTc5ZWIyYjEtZjY4Zi00YmEwLTk3MjEtZDg2ZGE5MjFiY2UxIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDE5LTAzLTExVDEwOjExOjM1LjM1NTcwMDAzMVoifQ%3D%3D: net/http: TLS handshake timeout
+
+/home/docker>
