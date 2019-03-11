@@ -160,3 +160,181 @@ CONTAINER ID        IMAGE                                                       
 d0cd715e5bd4        registry:2                                                       "/entrypoint.sh /e..."   2 days ago          Up About an hour    0.0.0.0:5000->5000/tcp                                               registry
 
 /home/docker>
+
+
+
+
+
+#
+#
+#
+#
+#
+#
+#
+# ls
+bin   dev  home  lib64  mnt  proc  run   srv  tmp  var
+boot  etc  lib   media  opt  root  sbin  sys  usr
+# cd /usr/share/nginx/html
+# ls
+50x.html  index.html
+# vi mypage.html
+sh: 11: vi: not found
+# cls
+sh: 12: cls: not found
+# clear
+# ^[[A^[[A^[[A^[[B
+sh: 14: : not found
+# vi mypage.html
+sh: 15: vi: not found
+# ps
+sh: 16: ps: not found
+# cat > mypage.html
+<h1>My Home Page</h1>
+^C
+# ls
+50x.html  index.html  mypage.html
+# exit
+
+/home/docker> docker container exec 2b58cd023552 ls /usr/share/nginx/html
+50x.html
+index.html
+mypage.html
+
+/home/docker> docker container ls | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+2b58cd023552        nginx                                                            "nginx -g 'daemon ..."   16 minutes ago      Up 16 minutes       0.0.0.0:8080->80/tcp                                                 inspiring_montalcini
+
+/home/docker>
+
+/home/docker> docker container ls | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+2b58cd023552        nginx                                                            "nginx -g 'daemon ..."   16 minutes ago      Up 16 minutes       0.0.0.0:8080->80/tcp                                                 inspiring_montalcini
+
+/home/docker> docker container run -d -p 8081:80 nginx
+1c90dc9f3a5108ce6adb5134f29730f2654ee02635d511278c0d298317c999e5
+
+/home/docker> tracert
+-bash: tracert: command not found
+
+/home/docker> docker container ls | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+1c90dc9f3a51        nginx                                                            "nginx -g 'daemon ..."   About an hour ago   Up About an hour    0.0.0.0:8081->80/tcp                                                 jovial_shirley
+2b58cd023552        nginx                                                            "nginx -g 'daemon ..."   About an hour ago   Up About an hour    0.0.0.0:8080->80/tcp                                                 inspiring_montalcini
+
+/home/docker>
+
+/home/docker> docker container exec 2b58cd023552 ls /usr/share/nginx/html
+50x.html
+index.html
+mypage.html
+
+/home/docker> docker container exec -it 2b58cd023552 bash
+root@2b58cd023552:/# apt-get update
+Get:1 http://security-cdn.debian.org/debian-security stretch/updates InRelease [94.3 kB]
+Get:2 http://security-cdn.debian.org/debian-security stretch/updates/main amd64 Packages [476 kB]
+Ign:3 http://cdn-fastly.deb.debian.org/debian stretch InRelease
+Get:4 http://cdn-fastly.deb.debian.org/debian stretch-updates InRelease [91.0 kB]
+Get:5 http://cdn-fastly.deb.debian.org/debian stretch Release [118 kB]
+Get:6 http://cdn-fastly.deb.debian.org/debian stretch-updates/main amd64 Packages [11.1 kB]
+Get:7 http://cdn-fastly.deb.debian.org/debian stretch Release.gpg [2434 B]
+Get:8 http://cdn-fastly.deb.debian.org/debian stretch/main amd64 Packages [7084 kB]
+Fetched 7876 kB in 9s (870 kB/s)
+Reading package lists... Done
+root@2b58cd023552:/# ping google.com
+bash: ping: command not found
+root@2b58cd023552:/# apt-get install iputils-ping
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  libcap2 libcap2-bin libidn11 libnettle6 libpam-cap
+The following NEW packages will be installed:
+  iputils-ping libcap2 libcap2-bin libidn11 libnettle6 libpam-cap
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+Need to get 421 kB of archives.
+After this operation, 970 kB of additional disk space will be used.
+Do you want to continue? [Y/n] Y
+Get:1 http://cdn-fastly.deb.debian.org/debian stretch/main amd64 libcap2 amd64 1:2.25-1 [16.8 kB]
+Get:2 http://cdn-fastly.deb.debian.org/debian stretch/main amd64 libidn11 amd64 1.33-1 [115 kB]
+Get:3 http://cdn-fastly.deb.debian.org/debian stretch/main amd64 libnettle6 amd64 3.3-1+b2 [192 kB]
+Get:4 http://cdn-fastly.deb.debian.org/debian stretch/main amd64 iputils-ping amd64 3:20161105-1 [57.5 kB]
+Get:5 http://cdn-fastly.deb.debian.org/debian stretch/main amd64 libcap2-bin amd64 1:2.25-1 [26.5 kB]
+Get:6 http://cdn-fastly.deb.debian.org/debian stretch/main amd64 libpam-cap amd64 1:2.25-1 [13.5 kB]
+Fetched 421 kB in 1s (339 kB/s)
+debconf: delaying package configuration, since apt-utils is not installed
+Selecting previously unselected package libcap2:amd64.
+(Reading database ... 7027 files and directories currently installed.)
+Preparing to unpack .../0-libcap2_1%3a2.25-1_amd64.deb ...
+Unpacking libcap2:amd64 (1:2.25-1) ...
+Selecting previously unselected package libidn11:amd64.
+Preparing to unpack .../1-libidn11_1.33-1_amd64.deb ...
+Unpacking libidn11:amd64 (1.33-1) ...
+Selecting previously unselected package libnettle6:amd64.
+Preparing to unpack .../2-libnettle6_3.3-1+b2_amd64.deb ...
+Unpacking libnettle6:amd64 (3.3-1+b2) ...
+Selecting previously unselected package iputils-ping.
+Preparing to unpack .../3-iputils-ping_3%3a20161105-1_amd64.deb ...
+Unpacking iputils-ping (3:20161105-1) ...
+Selecting previously unselected package libcap2-bin.
+Preparing to unpack .../4-libcap2-bin_1%3a2.25-1_amd64.deb ...
+Unpacking libcap2-bin (1:2.25-1) ...
+Selecting previously unselected package libpam-cap:amd64.
+Preparing to unpack .../5-libpam-cap_1%3a2.25-1_amd64.deb ...
+Unpacking libpam-cap:amd64 (1:2.25-1) ...
+Setting up libnettle6:amd64 (3.3-1+b2) ...
+Setting up libcap2:amd64 (1:2.25-1) ...
+Processing triggers for libc-bin (2.24-11+deb9u4) ...
+Setting up libidn11:amd64 (1.33-1) ...
+Setting up iputils-ping (3:20161105-1) ...
+Setting up libpam-cap:amd64 (1:2.25-1) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (No usable dialog-like program is installed, so the dialog based frontend cannot be used. at /usr/share/perl5/Debconf/FrontEnd/Dialog.pm line 76.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.24.1 /usr/local/share/perl/5.24.1 /usr/lib/x86_64-linux-gnu/perl5/5.24 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.24 /usr/share/perl/5.24 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base .) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+debconf: falling back to frontend: Teletype
+Setting up libcap2-bin (1:2.25-1) ...
+Processing triggers for libc-bin (2.24-11+deb9u4) ...
+root@2b58cd023552:/# ping google.com
+PING google.com (216.58.200.142) 56(84) bytes of data.
+64 bytes from maa05s10-in-f14.1e100.net (216.58.200.142): icmp_seq=1 ttl=53 time=78.5 ms
+64 bytes from maa05s10-in-f14.1e100.net (216.58.200.142): icmp_seq=2 ttl=53 time=74.3 ms
+^C
+--- google.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 74.324/76.415/78.507/2.109 ms
+root@2b58cd023552:/# exit
+exit
+
+/home/docker> #docker container exec -it 2b58cd023552 bash
+
+/home/docker>
+
+/home/docker> #docker container exec -it 2b58cd023552 bash
+
+/home/docker> docker container ls | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+1c90dc9f3a51        nginx                                                            "nginx -g 'daemon ..."   About an hour ago   Up About an hour    0.0.0.0:8081->80/tcp                                                 jovial_shirley
+2b58cd023552        nginx                                                            "nginx -g 'daemon ..."   About an hour ago   Up About an hour    0.0.0.0:8080->80/tcp                                                 inspiring_montalcini
+
+/home/docker> docker commit 2b58cd023552 nginx-ping
+sha256:1b0a35894d1f764d6be3dbc1dfab234e9811af89a9803d68576df1d7f9c9a28e
+
+/home/docker> docker container rm -f 1c90dc9f3a51 2b58cd023552
+1c90dc9f3a51
+2b58cd023552
+
+/home/docker> docker container ls | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+
+/home/docker> docker container run -d 9999:80
+
+/home/docker> docker container run -d -p 9999:80 nginx-ping
+22cdc2b4c5f77ba4c56454008dbf9716e70aa6c3c7d60cded2156e6efa10ee99
+
+/home/docker> docker container exec 22cdc2b4c5 ping google.com
+PING google.com (216.58.200.142) 56(84) bytes of data.
+64 bytes from maa05s10-in-f14.1e100.net (216.58.200.142): icmp_seq=1 ttl=53 time=81.4 ms
+64 bytes from maa05s10-in-f14.1e100.net (216.58.200.142): icmp_seq=2 ttl=53 time=78.7 ms
+^C
