@@ -600,3 +600,206 @@ c59b3ca455e3: Pushed
 Patch https://registry-1.docker.io/v2/adityaprabhakara/nginx-ping/blobs/uploads/979eb2b1-f68f-4ba0-9721-d86da921bce1?_state=4dHntVSe8SscuYmF3zYsHdGuqZu_pGzx4ufh_W9DZUt7Ik5hbWUiOiJhZGl0eWFwcmFiaGFrYXJhL25naW54LXBpbmciLCJVVUlEIjoiOTc5ZWIyYjEtZjY4Zi00YmEwLTk3MjEtZDg2ZGE5MjFiY2UxIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDE5LTAzLTExVDEwOjExOjM1LjM1NTcwMDAzMVoifQ%3D%3D: net/http: TLS handshake timeout
 
 /home/docker>
+
+----------------------------------------
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat Dockerfile
+FROM alpine
+RUN apk update
+RUN apk add apache2
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image build -f Dockerfile -t apache:1-alpine -t apache:latest .
+Sending build context to Docker daemon  2.048kB
+Step 1/3 : FROM alpine
+ ---> 5cb3aa00f899
+Step 2/3 : RUN apk update
+ ---> Running in 0b587a481f74
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/community/x86_64/APKINDEX.tar.gz
+v3.9.2-1-g592d872fb8 [http://dl-cdn.alpinelinux.org/alpine/v3.9/main]
+v3.9.2-2-ge7dc3349a9 [http://dl-cdn.alpinelinux.org/alpine/v3.9/community]
+OK: 9754 distinct packages available
+ ---> a08c7d0d841e
+Removing intermediate container 0b587a481f74
+Step 3/3 : RUN apk add apache2
+ ---> Running in a63651ca0b48
+(1/6) Installing libuuid (2.33-r0)
+(2/6) Installing apr (1.6.5-r0)
+(3/6) Installing expat (2.2.6-r0)
+(4/6) Installing apr-util (1.6.1-r5)
+(5/6) Installing pcre (8.42-r1)
+(6/6) Installing apache2 (2.4.38-r2)
+Executing apache2-2.4.38-r2.pre-install
+Executing busybox-1.29.3-r10.trigger
+OK: 9 MiB in 20 packages
+ ---> f1bee09fdf4b
+Removing intermediate container a63651ca0b48
+Successfully built f1bee09fdf4b
+Successfully tagged apache:1-alpine
+Successfully tagged apache:latest
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image ls alpine
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+alpine              latest              5cb3aa00f899        3 days ago          5.53MB
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image ls apache:1-alpine
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+apache              1-alpine            f1bee09fdf4b        5 minutes ago       10.4MB
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image ls | grep a08c7d0d841e
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image ls -a| grep a08c7d0d841e
+<none>                                                           <none>              a08c7d0d841e        6 minutes ago       6.84MB
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image build -f Dockerfile -t apache:1-alpine -t apache:latest .
+Sending build context to Docker daemon  2.048kB
+Step 1/3 : FROM alpine
+ ---> 5cb3aa00f899
+Step 2/3 : RUN apk update
+ ---> Using cache
+ ---> a08c7d0d841e
+Step 3/3 : RUN apk add apache2
+ ---> Using cache
+ ---> f1bee09fdf4b
+Successfully built f1bee09fdf4b
+Successfully tagged apache:1-alpine
+Successfully tagged apache:latest
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image build -f Dockerfile -t apache:1-alpine -t apache:latest .
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image build --no-cache -f Dockerfile -t apache:1-alpine -t apache:latest .
+Sending build context to Docker daemon  2.048kB
+Step 1/3 : FROM alpine
+ ---> 5cb3aa00f899
+Step 2/3 : RUN apk update
+ ---> Running in 666e17548b8e
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/community/x86_64/APKINDEX.tar.gz
+v3.9.2-1-g592d872fb8 [http://dl-cdn.alpinelinux.org/alpine/v3.9/main]
+v3.9.2-2-ge7dc3349a9 [http://dl-cdn.alpinelinux.org/alpine/v3.9/community]
+OK: 9754 distinct packages available
+ ---> 88f6b4b68376
+Removing intermediate container 666e17548b8e
+Step 3/3 : RUN apk add apache2
+ ---> Running in 8a5871830143
+(1/6) Installing libuuid (2.33-r0)
+(2/6) Installing apr (1.6.5-r0)
+(3/6) Installing expat (2.2.6-r0)
+(4/6) Installing apr-util (1.6.1-r5)
+(5/6) Installing pcre (8.42-r1)
+(6/6) Installing apache2 (2.4.38-r2)
+Executing apache2-2.4.38-r2.pre-install
+Executing busybox-1.29.3-r10.trigger
+OK: 9 MiB in 20 packages
+ ---> a8b16ab3414b
+Removing intermediate container 8a5871830143
+Successfully built a8b16ab3414b
+Successfully tagged apache:1-alpine
+Successfully tagged apache:latest
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image build --no-cache -f Dockerfile -t apache:1-alpine -t apache:latest .
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image build -f Dockerfile -t apache:1-alpine -t apache:latest
+"docker image build" requires exactly 1 argument.
+See 'docker image build --help'.
+
+Usage:  docker image build [OPTIONS] PATH | URL | -
+
+Build an image from a Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> #docker image build -f Dockerfile -t apache:1-alpine -t apache:latest .
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cd ..
+
+/c/Users/Dell lap/docker-workshop/mar11> mkdir app
+
+/c/Users/Dell lap/docker-workshop/mar11> cd app
+
+/c/Users/Dell lap/docker-workshop/mar11/app> ls
+
+/c/Users/Dell lap/docker-workshop/mar11/app> cat > mypage.html
+<h1>My Page</h1>
+^C
+
+/c/Users/Dell lap/docker-workshop/mar11/app>
+
+/c/Users/Dell lap/docker-workshop/mar11/app>
+
+/c/Users/Dell lap/docker-workshop/mar11/app> cat > mypage.html
+<h1> My Code </h1>
+^C
+
+/c/Users/Dell lap/docker-workshop/mar11/app>
+
+/c/Users/Dell lap/docker-workshop/mar11/app> ls
+mypage.html
+
+/c/Users/Dell lap/docker-workshop/mar11/app> vi Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/app>
+
+/c/Users/Dell lap/docker-workshop/mar11/app> cat Dockerfile
+FROM apache:1-alpine
+COPY mypage.html /var/www/localhost/htdocs/
+
+/c/Users/Dell lap/docker-workshop/mar11/app> cat mypage.html
+<h1> My Code </h1>
+
+/c/Users/Dell lap/docker-workshop/mar11/app> docker image build -t app:1 -t app:latest .
+Sending build context to Docker daemon  3.072kB
+Step 1/2 : FROM apache:1-alpine
+ ---> a8b16ab3414b
+Step 2/2 : COPY mypage.html /var/www/localhost/htdocs/
+ ---> 818d51217c7b
+Successfully built 818d51217c7b
+Successfully tagged app:1
+Successfully tagged app:latest
+
+/c/Users/Dell lap/docker-workshop/mar11/app> vi Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/app> docker image build -t app:1 -t app:latest .
+Sending build context to Docker daemon  3.072kB
+Step 1/2 : FROM apache:1-alpine
+ ---> a8b16ab3414b
+Step 2/2 : COPY my.html /var/www/localhost/htdocs/
+COPY failed: stat /var/lib/docker/tmp/docker-builder523916302/my.html: no such file or directory
+
+/c/Users/Dell lap/docker-workshop/mar11/app>
+
+/c/Users/Dell lap/docker-workshop/mar11/app> docker image build -t app:1 -t app:latest .
+Sending build context to Docker daemon  3.072kB
+Step 1/2 : FROM apache:1-alpine
+ ---> a8b16ab3414b
+Step 2/2 : COPY my.html /var/www/localhost/htdocs/
+COPY failed: stat /var/lib/docker/tmp/docker-builder161874453/my.html: no such file or directory
+
+/c/Users/Dell lap/docker-workshop/mar11/app> vi Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/app>
+
+/c/Users/Dell lap/docker-workshop/mar11/app> cd ..
+
+/c/Users/Dell lap/docker-workshop/mar11> ls -ltrR
+.:
+total 0
+drwxrwxrwx 1 docker docker 0 Mar 11 10:45 apache
+drwxrwxrwx 1 docker docker 0 Mar 11 11:10 app
+
+./apache:
+total 1
+-rwxrwxrwx 1 docker docker 47 Mar 11 10:45 Dockerfile
+
+./app:
+total 1
+-rwxrwxrwx 1 docker docker 19 Mar 11 11:07 mypage.html
+-rwxrwxrwx 1 docker docker 65 Mar 11 11:12 Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11> cat Do
+cat: Do: No such file or directory
+
+/c/Users/Dell lap/docker-workshop/mar11> cat app/Dockerfile
+FROM apache:1-alpine
+COPY mypage.html /var/www/localhost/htdocs/
+
+/c/Users/Dell lap/docker-workshop/mar11>
