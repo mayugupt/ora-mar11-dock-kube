@@ -121,3 +121,820 @@ CONTAINER ID        IMAGE                                                       
 4d8ab8347571185f476bcbee3eb7b9dc67741b996b689c107c8661c993d5c3c0
 
 /c/Users/Dell lap/docker-workshop/mar11>
+
+
+-----------------------------------------------------------------------------------------
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat Dockerfile
+FROM alpine
+RUN apk update
+RUN apk add apache2
+CMD ["httpd", "-D", "FOREGROUND"]
+
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cd ..
+
+/c/Users/Dell lap/docker-workshop/mar11> ls
+apache  app
+
+/c/Users/Dell lap/docker-workshop/mar11> cd app
+
+/c/Users/Dell lap/docker-workshop/mar11/app> ls
+Dockerfile  mypage.html
+
+/c/Users/Dell lap/docker-workshop/mar11/app> cat Docker
+cat: Docker: No such file or directory
+
+/c/Users/Dell lap/docker-workshop/mar11/app>
+
+/c/Users/Dell lap/docker-workshop/mar11/app> cd ../apache/
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ls
+Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat Dockerfile
+FROM alpine
+RUN apk update
+RUN apk add apache2
+CMD ["httpd", "-D", "FOREGROUND"]
+
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image build -t apache:2-alpine -t apache:latest .
+Sending build context to Docker daemon  2.048kB
+Step 1/4 : FROM alpine
+ ---> 5cb3aa00f899
+Step 2/4 : RUN apk update
+ ---> Using cache
+ ---> 7a300c62ae3a
+Step 3/4 : RUN apk add apache2
+ ---> Using cache
+ ---> b6bc0e5e77fe
+Step 4/4 : CMD httpd -D FOREGROUND
+ ---> Using cache
+ ---> 6f5f73868b74
+Successfully built 6f5f73868b74
+Successfully tagged apache:2-alpine
+Successfully tagged apache:latest
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image history apache
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+6f5f73868b74        7 hours ago         /bin/sh -c #(nop)  CMD ["httpd" "-D" "FORE...   0B      
+b6bc0e5e77fe        8 hours ago         /bin/sh -c apk add apache2                      3.59MB  
+7a300c62ae3a        8 hours ago         /bin/sh -c apk update                           1.31MB  
+5cb3aa00f899        4 days ago          /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B      
+<missing>           4 days ago          /bin/sh -c #(nop) ADD file:88875982b0512a9...   5.53MB  
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container run -d -p8081:80 apache
+14ef3ff0d9ea4f7831c74cea512546109fc6fa64ee783094a81cad69d43409e9
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container ls  | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+14ef3ff0d9ea        apache                                                           "httpd -D FOREGROUND"    5 seconds ago       Up 4 seconds        0.0.0.0:8081->80/tcp                                                 suspicious_euler
+4d8ab8347571        b6bc0e5e77fe                                                     "httpd -D FOREGROUND"    11 minutes ago      Up 11 minutes       0.0.0.0:8080->80/tcp                                                 confident_minsky
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container exec 14ef3ff0d9ea which httpd
+/usr/sbin/httpd
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> vi Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container exec -it 14ef3ff0d9ea sh
+/ # cd /etc/apache2/
+/etc/apache2 # ls
+conf.d      httpd.conf  magic       mime.types
+/etc/apache2 # vi httpd.conf
+/etc/apache2 # sed -i "s/Listen 80/Listen 8080/" httpd.conf
+/etc/apache2 # grep Listen httpd.conf
+# Listen: Allows you to bind Apache to specific IP addresses and/or
+# Change this to Listen on specific IP addresses as shown below to
+#Listen 12.34.56.78:80
+Listen 8080
+/etc/apache2 # exit
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cd ..
+
+/c/Users/Dell lap/docker-workshop/mar11>
+
+/c/Users/Dell lap/docker-workshop/mar11> mkdir pinger
+
+/c/Users/Dell lap/docker-workshop/mar11> cd pinger/
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> vi Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger>
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker image build -t pinger .
+Sending build context to Docker daemon  2.048kB
+Step 1/2 : FROM alpine
+ ---> 5cb3aa00f899
+Step 2/2 : CMD ping -c4 google.com
+ ---> Running in d98d761b0066
+ ---> bd33c7b41784
+Removing intermediate container d98d761b0066
+Successfully built bd33c7b41784
+Successfully tagged pinger:latest
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker container run --rm pinger
+PING google.com (216.58.196.174): 56 data bytes
+64 bytes from 216.58.196.174: seq=0 ttl=53 time=42.111 ms
+64 bytes from 216.58.196.174: seq=1 ttl=53 time=46.597 ms
+64 bytes from 216.58.196.174: seq=2 ttl=53 time=42.678 ms
+64 bytes from 216.58.196.174: seq=3 ttl=53 time=46.037 ms
+
+--- google.com ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 42.111/44.355/46.597 ms
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker container run --rm pinger ping -c4 yahoo.com
+PING yahoo.com (98.138.219.231): 56 data bytes
+64 bytes from 98.138.219.231: seq=0 ttl=50 time=260.462 ms
+64 bytes from 98.138.219.231: seq=1 ttl=50 time=262.101 ms
+64 bytes from 98.138.219.231: seq=2 ttl=50 time=260.817 ms
+64 bytes from 98.138.219.231: seq=3 ttl=50 time=258.752 ms
+
+--- yahoo.com ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 258.752/260.533/262.101 ms
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> #docker container run --rm pinger oracle.com
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> vi Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker image build -t pinger .
+Sending build context to Docker daemon  2.048kB
+Step 1/3 : FROM alpine
+ ---> 5cb3aa00f899
+Step 2/3 : ENTRYPOINT ping -c4
+ ---> Running in 6235fc519186
+ ---> 20518f2aa174
+Removing intermediate container 6235fc519186
+Step 3/3 : CMD google.com
+ ---> Running in 5ce6bbcee556
+ ---> bb3d9a6c1f1a
+Removing intermediate container 5ce6bbcee556
+Successfully built bb3d9a6c1f1a
+Successfully tagged pinger:latest
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker container run --rm pinger
+PING google.com (216.58.200.142): 56 data bytes
+64 bytes from 216.58.200.142: seq=0 ttl=53 time=40.534 ms
+64 bytes from 216.58.200.142: seq=2 ttl=53 time=52.146 ms
+64 bytes from 216.58.200.142: seq=3 ttl=53 time=40.517 ms
+
+--- google.com ping statistics ---
+4 packets transmitted, 3 packets received, 25% packet loss
+round-trip min/avg/max = 40.517/44.399/52.146 ms
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker container run --rm pinger oracle.com
+PING oracle.com (137.254.120.50): 56 data bytes
+64 bytes from 137.254.120.50: seq=0 ttl=242 time=293.723 ms
+64 bytes from 137.254.120.50: seq=1 ttl=242 time=293.326 ms
+64 bytes from 137.254.120.50: seq=2 ttl=242 time=278.422 ms
+64 bytes from 137.254.120.50: seq=3 ttl=242 time=290.571 ms
+
+--- oracle.com ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 278.422/289.010/293.723 ms
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger>
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> cat Dockerfile
+FROM alpine
+ENTRYPOINT ["ping","-c4"]
+CMD ["google.com"]
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker image history apache
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+6f5f73868b74        7 hours ago         /bin/sh -c #(nop)  CMD ["httpd" "-D" "FORE...   0B      
+b6bc0e5e77fe        9 hours ago         /bin/sh -c apk add apache2                      3.59MB  
+7a300c62ae3a        9 hours ago         /bin/sh -c apk update                           1.31MB  
+5cb3aa00f899        4 days ago          /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B      
+<missing>           4 days ago          /bin/sh -c #(nop) ADD file:88875982b0512a9...   5.53MB  
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker container run  pinger oracle.com
+PING oracle.com (137.254.120.50): 56 data bytes
+64 bytes from 137.254.120.50: seq=0 ttl=242 time=292.808 ms
+64 bytes from 137.254.120.50: seq=1 ttl=242 time=296.810 ms
+64 bytes from 137.254.120.50: seq=2 ttl=242 time=283.652 ms
+64 bytes from 137.254.120.50: seq=3 ttl=242 time=284.050 ms
+
+--- oracle.com ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 283.652/289.330/296.810 ms
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker container ls -a | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS                     PORTS                                                                NAMES
+c9167efdb8bf        pinger                                                           "ping -c4 oracle.com"    13 seconds ago      Exited (0) 9 seconds ago                                                                        cranky_pike
+14ef3ff0d9ea        apache                                                           "httpd -D FOREGROUND"    23 minutes ago      Up 23 minutes              0.0.0.0:8081->80/tcp                                                 suspicious_euler
+4d8ab8347571        b6bc0e5e77fe                                                     "httpd -D FOREGROUND"    34 minutes ago      Up 34 minutes              0.0.0.0:8080->80/tcp                                                 confident_minsky
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker container run  --rm pinger oracle.com
+PING oracle.com (137.254.120.50): 56 data bytes
+64 bytes from 137.254.120.50: seq=0 ttl=242 time=308.195 ms
+64 bytes from 137.254.120.50: seq=1 ttl=242 time=290.249 ms
+64 bytes from 137.254.120.50: seq=2 ttl=242 time=286.863 ms
+64 bytes from 137.254.120.50: seq=3 ttl=242 time=287.925 ms
+
+--- oracle.com ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 286.863/293.308/308.195 ms
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker container ls -a | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS                      PORTS                                                                NAMES
+c9167efdb8bf        pinger                                                           "ping -c4 oracle.com"    30 seconds ago      Exited (0) 26 seconds ago                                                                        cranky_pike
+14ef3ff0d9ea        apache                                                           "httpd -D FOREGROUND"    23 minutes ago      Up 23 minutes               0.0.0.0:8081->80/tcp                                                 suspicious_euler
+4d8ab8347571        b6bc0e5e77fe                                                     "httpd -D FOREGROUND"    34 minutes ago      Up 34 minutes               0.0.0.0:8080->80/tcp                                                 confident_minsky
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> docker ps -a | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED              STATUS                          PORTS                                                                NAMES
+c9167efdb8bf        pinger                                                           "ping -c4 oracle.com"    About a minute ago   Exited (0) About a minute ago                                                                        cranky_pike
+14ef3ff0d9ea        apache                                                           "httpd -D FOREGROUND"    24 minutes ago       Up 24 minutes                   0.0.0.0:8081->80/tcp                                                 suspicious_euler
+4d8ab8347571        b6bc0e5e77fe                                                     "httpd -D FOREGROUND"    35 minutes ago       Up 35 minutes                   0.0.0.0:8080->80/tcp                                                 confident_minsky
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger>
+
+/c/Users/Dell lap/docker-workshop/mar11/pinger> cd ..
+
+/c/Users/Dell lap/docker-workshop/mar11> ls
+apache  app  pinger
+
+/c/Users/Dell lap/docker-workshop/mar11> cd apache/
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ls
+Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> vi docker-entrypoint.sh
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ls
+Dockerfile  docker-entrypoint.sh
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat Dockerfile
+FROM alpine
+RUN apk update
+RUN apk add apache2
+CMD ["httpd", "-D", "FOREGROUND"]
+
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat docker-entrypoint.sh
+#!/bin/sh
+
+sed -i "s/Listen 80/Listen 8080/" /etc/apache2/httpd.conf
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> vi Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> vi docker-entrypoint.sh
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat Dockerfile
+FROM alpine
+RUN apk update
+RUN apk add apache2
+COPY docker-entrypoint.sh /bin
+RUN chmod +x /bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["httpd", "-D", "FOREGROUND"]
+
+
+#docker-entrypoint.sh httpd -D FOREGROUND
+
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat docker-entrypoint.sh
+#!/bin/sh
+
+sed -i "s/Listen 80/Listen 8080/" /etc/apache2/httpd.conf
+exec "$@"
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cd ..
+
+/c/Users/Dell lap/docker-workshop/mar11> ls
+apache  app  pinger
+
+/c/Users/Dell lap/docker-workshop/mar11> vi script.sh
+
+/c/Users/Dell lap/docker-workshop/mar11> sh script.sh one two three
+one two three
+
+/c/Users/Dell lap/docker-workshop/mar11> vi script.sh
+
+/c/Users/Dell lap/docker-workshop/mar11> #sh script.sh echo Hello
+
+/c/Users/Dell lap/docker-workshop/mar11> cat script.sh
+#!/bin/sh
+
+echo $@
+exec $@
+
+/c/Users/Dell lap/docker-workshop/mar11> cat script.sh echo Hello
+#!/bin/sh
+
+echo $@
+exec $@
+cat: echo: No such file or directory
+cat: Hello: No such file or directory
+
+/c/Users/Dell lap/docker-workshop/mar11> sh script.sh echo Hello
+echo Hello
+Hello
+
+/c/Users/Dell lap/docker-workshop/mar11> vi script.sh
+
+/c/Users/Dell lap/docker-workshop/mar11> sh script.sh echo Hello
+echo Hello
+Hello
+
+/c/Users/Dell lap/docker-workshop/mar11> ls
+apache  app  pinger  script.sh
+
+/c/Users/Dell lap/docker-workshop/mar11> cd ap
+-bash: cd: ap: No such file or directory
+
+/c/Users/Dell lap/docker-workshop/mar11> cd apache/
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ls
+Dockerfile  docker-entrypoint.sh
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat Dockerfile
+FROM alpine
+RUN apk update
+RUN apk add apache2
+COPY docker-entrypoint.sh /bin
+RUN chmod +x /bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["httpd", "-D", "FOREGROUND"]
+
+
+#docker-entrypoint.sh httpd -D FOREGROUND
+
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat docker-entrypoint.sh
+#!/bin/sh
+
+sed -i "s/Listen 80/Listen 8080/" /etc/apache2/httpd.conf
+exec "$@"
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image build -t apache:3-alpine -t apache:latest .
+Sending build context to Docker daemon  3.072kB
+Step 1/7 : FROM alpine
+ ---> 5cb3aa00f899
+Step 2/7 : RUN apk update
+ ---> Using cache
+ ---> 7a300c62ae3a
+Step 3/7 : RUN apk add apache2
+ ---> Using cache
+ ---> b6bc0e5e77fe
+Step 4/7 : COPY docker-entrypoint.sh /bin
+ ---> 071812555ea8
+Step 5/7 : RUN chmod +x /bin/docker-entrypoint.sh
+ ---> Running in 43a2f754c4cf
+ ---> ce568a73b4f6
+Removing intermediate container 43a2f754c4cf
+Step 6/7 : ENTRYPOINT docker-entrypoint.sh
+ ---> Running in d961151e8103
+ ---> 7fccf82516ed
+Removing intermediate container d961151e8103
+Step 7/7 : CMD httpd -D FOREGROUND
+ ---> Running in c210c5b4bf53
+ ---> fa1454b01577
+Removing intermediate container c210c5b4bf53
+Successfully built fa1454b01577
+Successfully tagged apache:3-alpine
+Successfully tagged apache:latest
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container run -d -p 9999:8080 apache
+d16cd1c2bfd516798d001d82bc683b6ca920b0eeb3d9166dc9eadf4148261f6a
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container run -d  apache:2               Unable to find image 'apache:2' locally
+^C
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container run -d  apache:2-alpine
+100aaa49cb2578c2dc3a9272f876c0ea4216c9a7868798bd5ef34d9c5667a5e5
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container ls -a | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS                         PORTS                                                                NAMES
+100aaa49cb25        apache:2-alpine                                                  "httpd -D FOREGROUND"    9 seconds ago       Up 8 seconds                                                                                        objective_poincare
+d16cd1c2bfd5        apache                                                           "docker-entrypoint..."   41 minutes ago      Up 41 minutes                  0.0.0.0:9999->8080/tcp                                               eloquent_nightingale
+c9167efdb8bf        pinger                                                           "ping -c4 oracle.com"    About an hour ago   Exited (0) About an hour ago                                                                        cranky_pike
+14ef3ff0d9ea        6f5f73868b74                                                     "httpd -D FOREGROUND"    About an hour ago   Up About an hour               0.0.0.0:8081->80/tcp                                                 suspicious_euler
+4d8ab8347571        b6bc0e5e77fe                                                     "httpd -D FOREGROUND"    2 hours ago         Up 2 hours                     0.0.0.0:8080->80/tcp                                                 confident_minsky
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container rm -f d16cd1c2bfd5 c9167efdb8bf 14ef3ff0d9ea 4d8ab8347571
+d16cd1c2bfd5
+c9167efdb8bf
+14ef3ff0d9ea
+4d8ab8347571
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container ls -a | grep -v k8s            CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+100aaa49cb25        apache:2-alpine                                                  "httpd -D FOREGROUND"    27 seconds ago      Up 26 seconds                                                                            objective_poincare
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container exec -it 100aaa49cb25 sh
+/ # ps
+PID   USER     TIME  COMMAND
+    1 root      0:00 httpd -D FOREGROUND
+    5 apache    0:00 httpd -D FOREGROUND
+    6 apache    0:00 httpd -D FOREGROUND
+    7 apache    0:00 httpd -D FOREGROUND
+    8 apache    0:00 httpd -D FOREGROUND
+    9 apache    0:00 httpd -D FOREGROUND
+   10 root      0:00 sh
+   15 root      0:00 ps
+/ # ps -ef
+PID   USER     TIME  COMMAND
+    1 root      0:00 httpd -D FOREGROUND
+    5 apache    0:00 httpd -D FOREGROUND
+    6 apache    0:00 httpd -D FOREGROUND
+    7 apache    0:00 httpd -D FOREGROUND
+    8 apache    0:00 httpd -D FOREGROUND
+    9 apache    0:00 httpd -D FOREGROUND
+   10 root      0:00 sh
+   16 root      0:00 ps -ef
+/ # exit
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ps -ef | grep "httpd -D FOREGROUND"
+root     30513 30492  0 06:26 ?        00:00:00 httpd -D FOREGROUND
+100      30583 30513  0 06:26 ?        00:00:00 httpd -D FOREGROUND
+100      30586 30513  0 06:26 ?        00:00:00 httpd -D FOREGROUND
+100      30588 30513  0 06:26 ?        00:00:00 httpd -D FOREGROUND
+100      30589 30513  0 06:26 ?        00:00:00 httpd -D FOREGROUND
+100      30591 30513  0 06:26 ?        00:00:00 httpd -D FOREGROUND
+docker   31243  5610  0 06:28 pts/0    00:00:00 grep httpd -D FOREGROUND
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ps -ef | grep 30492
+root     30492  2433  0 06:26 ?        00:00:00 docker-containerd-shim 100aaa49cb2578c2dc3a9272f876c0ea4216c9a7868798bd5ef34d9c5667a5e5 /var/run/docker/libcontainerd/100aaa49cb2578c2dc3a9272f876c0ea4216c9a7868798bd5ef34d9c5667a5e5 docker-runc
+root     30513 30492  0 06:26 ?        00:00:00 httpd -D FOREGROUND
+docker   31602  5610  0 06:30 pts/0    00:00:00 grep 30492
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ptree
+-bash: ptree: command not found
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ps -e f | grep 30492
+31804 pts/0    S+     0:00              \_ grep 30492
+30492 ?        Sl     0:00  |   \_ docker-containerd-shim 100aaa49cb2578c2dc3a9272f876c0ea4216c9a7868798bd5ef34d9c5667a5e5 /var/run/docker/libcontainerd/100aaa49cb2578c2dc3a9272f876c0ea4216c9a7868798bd5ef34d9c5667a5e5 docker-runc
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ps -e f 30492
+  PID TTY      STAT   TIME COMMAND
+    2 ?        S      0:00 [kthreadd]
+    3 ?        S      0:01  \_ [ksoftirqd/0]
+    5 ?        S<     0:00  \_ [kworker/0:0H]
+    7 ?        S      0:10  \_ [rcu_sched]
+    8 ?        S      0:00  \_ [rcu_bh]
+    9 ?        S      0:00  \_ [migration/0]
+   10 ?        S<     0:00  \_ [lru-add-drain]
+   11 ?        S      0:00  \_ [cpuhp/0]
+   12 ?        S      0:00  \_ [cpuhp/1]
+   13 ?        S      0:00  \_ [migration/1]
+   14 ?        S      0:01  \_ [ksoftirqd/1]
+   16 ?        S<     0:00  \_ [kworker/1:0H]
+   17 ?        S      0:00  \_ [kdevtmpfs]
+   18 ?        S<     0:00  \_ [netns]
+  429 ?        S      0:00  \_ [oom_reaper]
+  430 ?        S<     0:00  \_ [writeback]
+  431 ?        S      0:00  \_ [kcompactd0]
+  433 ?        S<     0:00  \_ [crypto]
+  434 ?        S<     0:00  \_ [bioset]
+  435 ?        S<     0:00  \_ [kblockd]
+  491 ?        S<     0:00  \_ [ata_sff]
+  504 ?        S<     0:00  \_ [md]
+  524 ?        S<     0:00  \_ [cfg80211]
+  619 ?        S<     0:00  \_ [rpciod]
+  620 ?        S<     0:00  \_ [xprtiod]
+  654 ?        S      0:13  \_ [kswapd0]
+  655 ?        S<     0:00  \_ [vmstat]
+  748 ?        S<     0:00  \_ [nfsiod]
+  757 ?        S<     0:00  \_ [cifsiod]
+  758 ?        S<     0:00  \_ [cifsoplockd]
+  806 ?        S<     0:00  \_ [acpi_thermal_pm]
+  834 ?        S<     0:00  \_ [bioset]
+  837 ?        S<     0:00  \_ [bioset]
+  840 ?        S<     0:00  \_ [bioset]
+  843 ?        S<     0:00  \_ [bioset]
+  846 ?        S<     0:00  \_ [bioset]
+  849 ?        S<     0:00  \_ [bioset]
+  852 ?        S<     0:00  \_ [bioset]
+  855 ?        S<     0:00  \_ [bioset]
+  956 ?        S      0:00  \_ [scsi_eh_0]
+  958 ?        S<     0:00  \_ [scsi_tmf_0]
+  960 ?        S      0:00  \_ [scsi_eh_1]
+  963 ?        S<     0:00  \_ [scsi_tmf_1]
+  965 ?        S      0:00  \_ [scsi_eh_2]
+  967 ?        S<     0:00  \_ [scsi_tmf_2]
+  969 ?        S      0:00  \_ [scsi_eh_3]
+  971 ?        S<     0:00  \_ [scsi_tmf_3]
+  974 ?        S      0:00  \_ [scsi_eh_4]
+  975 ?        S<     0:00  \_ [scsi_tmf_4]
+  977 ?        S      0:00  \_ [scsi_eh_5]
+  979 ?        S<     0:00  \_ [scsi_tmf_5]
+  981 ?        S      0:00  \_ [scsi_eh_6]
+  983 ?        S<     0:00  \_ [scsi_tmf_6]
+  985 ?        S      0:00  \_ [scsi_eh_7]
+  987 ?        S<     0:00  \_ [scsi_tmf_7]
+  989 ?        S      0:00  \_ [scsi_eh_8]
+  991 ?        S<     0:00  \_ [scsi_tmf_8]
+  994 ?        S      0:00  \_ [scsi_eh_9]
+  995 ?        S<     0:00  \_ [scsi_tmf_9]
+  997 ?        S      0:00  \_ [scsi_eh_10]
+  999 ?        S<     0:00  \_ [scsi_tmf_10]
+ 1000 ?        S      0:00  \_ [scsi_eh_11]
+ 1002 ?        S<     0:00  \_ [scsi_tmf_11]
+ 1006 ?        S      0:00  \_ [scsi_eh_12]
+ 1007 ?        S<     0:00  \_ [scsi_tmf_12]
+ 1010 ?        S      0:00  \_ [scsi_eh_13]
+ 1011 ?        S<     0:00  \_ [scsi_tmf_13]
+ 1013 ?        S      0:00  \_ [scsi_eh_14]
+ 1015 ?        S<     0:00  \_ [scsi_tmf_14]
+ 1017 ?        S      0:00  \_ [scsi_eh_15]
+ 1019 ?        S<     0:00  \_ [scsi_tmf_15]
+ 1021 ?        S      0:00  \_ [scsi_eh_16]
+ 1023 ?        S<     0:00  \_ [scsi_tmf_16]
+ 1025 ?        S      0:00  \_ [scsi_eh_17]
+ 1027 ?        S<     0:00  \_ [scsi_tmf_17]
+ 1029 ?        S      0:00  \_ [scsi_eh_18]
+ 1031 ?        S<     0:00  \_ [scsi_tmf_18]
+ 1034 ?        S      0:00  \_ [scsi_eh_19]
+ 1035 ?        S<     0:00  \_ [scsi_tmf_19]
+ 1037 ?        S      0:00  \_ [scsi_eh_20]
+ 1039 ?        S<     0:00  \_ [scsi_tmf_20]
+ 1041 ?        S      0:00  \_ [scsi_eh_21]
+ 1043 ?        S<     0:00  \_ [scsi_tmf_21]
+ 1045 ?        S      0:00  \_ [scsi_eh_22]
+ 1047 ?        S<     0:00  \_ [scsi_tmf_22]
+ 1049 ?        S      0:00  \_ [scsi_eh_23]
+ 1051 ?        S<     0:00  \_ [scsi_tmf_23]
+ 1053 ?        S      0:00  \_ [scsi_eh_24]
+ 1055 ?        S<     0:00  \_ [scsi_tmf_24]
+ 1057 ?        S      0:00  \_ [scsi_eh_25]
+ 1059 ?        S<     0:00  \_ [scsi_tmf_25]
+ 1062 ?        S      0:00  \_ [scsi_eh_26]
+ 1063 ?        S<     0:00  \_ [scsi_tmf_26]
+ 1065 ?        S      0:00  \_ [scsi_eh_27]
+ 1067 ?        S<     0:00  \_ [scsi_tmf_27]
+ 1070 ?        S      0:00  \_ [scsi_eh_28]
+ 1071 ?        S<     0:00  \_ [scsi_tmf_28]
+ 1073 ?        S      0:00  \_ [scsi_eh_29]
+ 1075 ?        S<     0:00  \_ [scsi_tmf_29]
+ 1098 ?        S<     0:00  \_ [ipv6_addrconf]
+ 1099 ?        S<     0:00  \_ [ceph-msgr]
+ 1226 ?        S<     0:00  \_ [bioset]
+ 1236 ?        S<     0:00  \_ [bioset]
+ 1249 ?        S<     0:00  \_ [kworker/0:1H]
+ 1250 ?        S<     0:00  \_ [kworker/1:1H]
+ 1284 ?        S      0:00  \_ [kauditd]
+ 1796 ?        S<     0:00  \_ [iprt-VBoxWQueue]
+ 2037 ?        S<     0:00  \_ [nfsd4_callbacks]
+ 2038 ?        S      0:00  \_ [lockd]
+ 2040 ?        S      0:00  \_ [nfsd]
+ 2041 ?        S      0:00  \_ [nfsd]
+ 2042 ?        S      0:00  \_ [nfsd]
+ 2043 ?        S      0:00  \_ [nfsd]
+ 2044 ?        S      0:00  \_ [nfsd]
+ 2045 ?        S      0:00  \_ [nfsd]
+ 2046 ?        S      0:00  \_ [nfsd]
+ 2047 ?        S      0:00  \_ [nfsd]
+ 2063 ?        S      0:00  \_ [jbd2/sda1-8]
+ 2064 ?        S<     0:00  \_ [ext4-rsv-conver]
+19888 ?        S      0:00  \_ [kworker/0:1]
+20201 ?        S      0:00  \_ [kworker/u4:0]
+29757 ?        S      0:00  \_ [kworker/1:1]
+30489 ?        S      0:00  \_ [kworker/0:0]
+30579 ?        S      0:00  \_ [kworker/u4:2]
+30674 ?        S      0:00  \_ [kworker/1:3]
+31799 ?        S      0:00  \_ [kworker/1:0]
+    1 ?        Ss     0:35 /sbin/init noembed norestore
+ 1283 ?        Ss     0:02 /lib/systemd/systemd-journald
+ 1293 ?        Ss     0:00 /lib/systemd/systemd-udevd
+ 1299 ?        Ssl    0:00 /lib/systemd/systemd-timesyncd
+ 1974 ?        Ss     0:00 /lib/systemd/systemd-networkd
+ 1976 tty1     Ss+    0:00 /sbin/getty -L tty1 115200 vt100
+ 1984 ?        Ss     0:00 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile
+ 1986 ?        Ss     0:00 /usr/bin/rpcbind
+ 1994 ?        Ss     0:00 /lib/systemd/systemd-logind
+ 2004 ?        Ssl    0:01 /usr/sbin/VBoxService -f --disable-automount
+ 2026 ?        Ss     0:00 /lib/systemd/systemd-resolved
+ 2028 ?        Ss     0:00 /usr/sbin/rpc.mountd
+ 2032 ?        Ss     0:00 /usr/sbin/rpc.statd --no-notify
+ 2061 ?        Ss     0:00 /usr/sbin/sshd -D -e
+ 5592 ?        Ss     0:00  \_ sshd: docker [priv]
+ 5609 ?        S      0:01      \_ sshd: docker@pts/0
+ 5610 pts/0    Ss     0:00          \_ -bash
+31927 pts/0    R+     0:00              \_ ps -e f 30492
+ 2128 ?        Ssl    0:00 /usr/bin/rkt metadata-service
+ 2129 ?        Ssl    0:01 /usr/bin/rkt api-service
+ 2395 ?        Ssl    5:59 /usr/bin/dockerd -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock
+ 2433 ?        Ssl    0:13  \_ docker-containerd -l unix:///var/run/docker/libcontainerd/docker-
+ 3974 ?        Sl     0:00  |   \_ docker-containerd-shim ec9d9414b45ad5d0ebfe048ee363ec55b7c064
+ 3993 ?        Ss     0:00  |   |   \_ /pause
+ 4000 ?        Sl     0:00  |   \_ docker-containerd-shim 1b5eb71666357e07fd64e0ef09b17544eba91b
+ 4022 ?        Ss     0:00  |   |   \_ /pause
+ 4079 ?        Sl     0:00  |   \_ docker-containerd-shim 54ead6c0104a88f72d39f6a62b26277c979225
+ 4119 ?        Ss     0:00  |   |   \_ /pause
+ 4226 ?        Sl     0:00  |   \_ docker-containerd-shim 14a929393d1ddfe972ad45ea75fcc20d5445f8
+ 4252 ?        Ss     0:00  |   |   \_ /pause
+ 4319 ?        Sl     0:00  |   \_ docker-containerd-shim 00557de5c4c3ab006decf6be41fdc7b87f705c
+ 4366 ?        Ss     0:00  |   |   \_ /pause
+ 4375 ?        Sl     0:00  |   \_ docker-containerd-shim c4f2b0b1d80ea1b1d5f0eb5b98c22f043c89d5
+ 4442 ?        Ss     0:00  |   |   \_ /pause
+ 4570 ?        Sl     0:00  |   \_ docker-containerd-shim 728deecd10845abff9bfeea040de2683f3df7e
+ 4596 ?        Ss     0:00  |   |   \_ /bin/bash /opt/kube-addons.sh
+31839 ?        S      0:00  |   |       \_ sleep 56
+ 4622 ?        Sl     0:00  |   \_ docker-containerd-shim 14f5a7ff0bfae4d903eed4ad75ba8a8cb05f4f
+ 4670 ?        Ss     0:00  |   |   \_ /pause
+ 4630 ?        Sl     0:00  |   \_ docker-containerd-shim a2d701777e2431cda12de818db6d204832146b
+ 4665 ?        Ss     0:00  |   |   \_ /pause
+ 4778 ?        Sl     0:00  |   \_ docker-containerd-shim fa7b8d306fbfb661d0ec61ea54109f258560ef
+ 4795 ?        Ssl    0:04  |   |   \_ /tiller
+ 4894 ?        Sl     0:00  |   \_ docker-containerd-shim 8dd632ff8427b609ae88efd19b509d410bd57a
+ 4911 ?        Ssl    0:07  |   |   \_ /usr/sbin/grafana-server --homepath=/usr/share/grafana --
+ 4958 ?        Z      0:00  |   |       \_ [setup_grafana] <defunct>
+ 4989 ?        Sl     0:00  |   \_ docker-containerd-shim fa70ba08c0781d512fffecb1fe8ee36603e852
+ 5014 ?        Ss     0:00  |   |   \_ /pause
+ 5007 ?        Sl     0:00  |   \_ docker-containerd-shim 658c5578cf091e57e2d87837f526d0938c8def
+ 5040 ?        Ss     0:00  |   |   \_ /pause
+ 5158 ?        Sl     0:00  |   \_ docker-containerd-shim 670e4d2e50e9fa0df50b176d4c59bb3590c6df
+ 5177 ?        Ssl    0:08  |   |   \_ /heapster --source=kubernetes:https://kubernetes.default
+ 5255 ?        Sl     0:00  |   \_ docker-containerd-shim e6eee9b15be9d32c2c25f655f1a651aa447805
+ 5275 ?        Ss     0:00  |   |   \_ /pause
+ 5304 ?        Sl     0:00  |   \_ docker-containerd-shim a540587b19b7fc95d5611521f4e1ed7e39c711
+ 5392 ?        Ss     0:00  |   |   \_ /pause
+ 5318 ?        Sl     0:00  |   \_ docker-containerd-shim 6b74b265d68934e6703f7e0be035b402cffd32
+ 5369 ?        Ss     0:00  |   |   \_ /pause
+ 5511 ?        Sl     0:00  |   \_ docker-containerd-shim dfd4b2e488a3b62ee5570bc462845ca29e573b
+ 5529 ?        Ssl    0:06  |   |   \_ /kube-dns --domain=cluster.local. --dns-port=10053 --conf
+ 6021 ?        Sl     0:00  |   \_ docker-containerd-shim a5d9e6b8e08700f32e53b28030d9e9bc79a415
+ 6038 ?        Ss     0:00  |   |   \_ /usr/bin/dumb-init /nginx-ingress-controller --default-ba
+ 6089 ?        Ssl    0:30  |   |       \_ /nginx-ingress-controller --default-backend-service=k
+ 6557 ?        S      0:00  |   |           \_ nginx: master process /usr/sbin/nginx -c /etc/ngi
+ 6994 ?        Sl     0:00  |   |               \_ nginx: worker process
+ 6995 ?        Sl     0:00  |   |               \_ nginx: worker process
+ 6100 ?        Sl     0:00  |   \_ docker-containerd-shim 561c0ec0155e85966ccf084e10ad4521e82270
+ 6117 ?        Ssl    0:40  |   |   \_ /bin/prometheus --config.file=/etc/prometheus/prometheus.
+ 6167 ?        Sl     0:00  |   \_ docker-containerd-shim 9708f8279ea3ed625d7a33838eb08acbc5bc79
+ 6184 ?        Ssl    0:04  |   |   \_ /heapster --source=kubernetes.summary_api:'' --sink=influ
+ 6246 ?        Sl     0:00  |   \_ docker-containerd-shim 5c44fab3776bca7a3c6bf2534865f50519b553
+ 6285 ?        Ssl    0:15  |   |   \_ influxd --config /etc/config.toml
+ 6248 ?        Sl     0:00  |   \_ docker-containerd-shim e6baf3849ae525993f35b6bbedc8c546562a2f
+ 6278 ?        Ssl    0:05  |   |   \_ /dashboard --insecure-bind-address=0.0.0.0 --bind-address
+ 6310 ?        Sl     0:00  |   \_ docker-containerd-shim 7015c4aa77759d9e4266351cb63c5a9c1a5905
+ 6381 ?        Ssl    0:06  |   |   \_ /metrics-server --source=kubernetes.summary_api:''
+ 6336 ?        Sl     0:00  |   \_ docker-containerd-shim b7c79ea842f57dbfbd93b892baf97c1868dda4
+ 6418 ?        Ssl    0:00  |   |   \_ /server
+ 6382 ?        Sl     0:00  |   \_ docker-containerd-shim 32bfc21b5821dd964d0912238f36cd8830b1e7
+ 6431 ?        Ssl    0:01  |   |   \_ /dnsmasq-nanny -v=2 -logtostderr -configDir=/etc/k8s/dns/
+ 6708 ?        S      0:01  |   |       \_ /usr/sbin/dnsmasq -k --cache-size=1000 --log-facility
+ 6400 ?        Sl     0:00  |   \_ docker-containerd-shim 5ba4cb89167eaea05eccc66e90e7c8f837c173
+ 6482 ?        Ssl    0:43  |   |   \_ influxd --config /etc/config.toml
+ 6788 ?        Sl     0:00  |   \_ docker-containerd-shim 391642485f749dbbe7ef4bd2f3c5f88cd674fb
+ 6812 ?        Ssl    0:07  |   |   \_ /usr/sbin/grafana-server --homepath=/usr/share/grafana --
+ 6927 ?        Z      0:00  |   |       \_ [setup_grafana] <defunct>
+ 6800 ?        Sl     0:00  |   \_ docker-containerd-shim 6568ea0c57c1d5e858dc8b9d51d405460d19b8
+ 6834 ?        Ssl    0:21  |   |   \_ /sidecar --v=2 --logtostderr --probe=kubedns,127.0.0.1:10
+30492 ?        Sl     0:00  |   \_ docker-containerd-shim 100aaa49cb2578c2dc3a9272f876c0ea4216c9
+30513 ?        Ss     0:00  |       \_ httpd -D FOREGROUND
+30583 ?        S      0:00  |           \_ httpd -D FOREGROUND
+30586 ?        S      0:00  |           \_ httpd -D FOREGROUND
+30588 ?        S      0:00  |           \_ httpd -D FOREGROUND
+30589 ?        S      0:00  |           \_ httpd -D FOREGROUND
+30591 ?        S      0:00  |           \_ httpd -D FOREGROUND
+ 4413 ?        Sl     0:00  \_ /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 1808
+ 4448 ?        Sl     0:00  \_ /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 443
+ 4497 ?        Sl     0:00  \_ /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 80 -
+ 3240 ?        Ssl    0:00 /usr/bin/crio --storage-driver=overlay2 --log-level=debug --insecure-
+ 5724 ?        Ssl   22:09 /usr/local/bin/localkube --dns-domain=cluster.local --node-ip=192.168
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> #sudo kill -9 30513
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container ls -a | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+100aaa49cb25        apache:2-alpine                                                  "httpd -D FOREGROUND"    10 minutes ago      Up 10 minutes                                                                            objective_poincare
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> sudo kill -9 30513
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container ls -a | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+100aaa49cb25        apache:2-alpine                                                  "httpd -D FOREGROUND"    11 minutes ago      Up 11 minutes                                                                            objective_poincare
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> sudo kill -9 30513
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container ls -a | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS                       PORTS                                                                NAMES
+100aaa49cb25        apache:2-alpine                                                  "httpd -D FOREGROUND"    11 minutes ago      Exited (137) 2 seconds ago                                                                        objective_poincare
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ls
+Dockerfile  docker-entrypoint.sh
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> ls
+Dockerfile  docker-entrypoint.sh
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat docker-entrypoint.sh
+#!/bin/sh
+
+sed -i "s/Listen 80/Listen 8080/" /etc/apache2/httpd.conf
+exec "$@"
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> vi docker-entrypoint.sh
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container run --rm alpine env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=33a659348dd9
+HOME=/root
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container run --rm -e APACHE_PORT=9090 alpine env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=84d37ce124bd
+APACHE_PORT=9090
+HOME=/root
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> cat docker-entrypoint.sh
+#!/bin/sh
+
+sed -i "s/Listen 80/Listen $APACHE_PORT/" /etc/apache2/httpd.conf
+exec "$@"
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> vi Dockerfile
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container ls | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker image build -t apache:4-alpine -t apache:latest .
+Sending build context to Docker daemon  3.072kB
+Step 1/8 : FROM alpine
+ ---> 5cb3aa00f899
+Step 2/8 : RUN apk update
+ ---> Using cache
+ ---> 7a300c62ae3a
+Step 3/8 : RUN apk add apache2
+ ---> Using cache
+ ---> b6bc0e5e77fe
+Step 4/8 : COPY docker-entrypoint.sh /bin
+ ---> de6bb7243f0d
+Step 5/8 : RUN chmod +x /bin/docker-entrypoint.sh
+ ---> Running in e30520ad5978
+ ---> 198b7e272ca1
+Removing intermediate container e30520ad5978
+Step 6/8 : ENV APACHE_PORT 80
+ ---> Running in 3b9b5667e078
+ ---> d0ae37d143d0
+Removing intermediate container 3b9b5667e078
+Step 7/8 : ENTRYPOINT docker-entrypoint.sh
+ ---> Running in d57d6990bdcd
+ ---> ab0b94a961cf
+Removing intermediate container d57d6990bdcd
+Step 8/8 : CMD httpd -D FOREGROUND
+ ---> Running in 110a520b2c46
+ ---> 7053b4f9bfc3
+Removing intermediate container 110a520b2c46
+Successfully built 7053b4f9bfc3
+Successfully tagged apache:4-alpine
+Successfully tagged apache:latest
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container run -d -p9995:80   apache
+cc11f99db678e53a386847053336298a52c475bb04bb8e964c87a3f6603d5c8c
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container run -d -p9994:9999 -e APACHE_PORT=9999  apache
+9caea4297d8a6d445fe02dd5b851fcccb721b01fa86cc3d24bccc806aca079c6
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container exec 9caea429 env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=9caea4297d8a
+APACHE_PORT=9999
+HOME=/root
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container exec 9caea429 grep Listen /etc/apache2/httpd.conf
+# Listen: Allows you to bind Apache to specific IP addresses and/or
+# Change this to Listen on specific IP addresses as shown below to
+#Listen 12.34.56.78:80
+Listen 9999
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container exec cc11f99db env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=cc11f99db678
+APACHE_PORT=80
+HOME=/root
+
+/c/Users/Dell lap/docker-workshop/mar11/apache> docker container exec cc11f99db grep Listen /etc/apache2/httpd.conf
+# Listen: Allows you to bind Apache to specific IP addresses and/or
+# Change this to Listen on specific IP addresses as shown below to
+#Listen 12.34.56.78:80
+Listen 80
+
+/c/Users/Dell lap/docker-workshop/mar11/apache>
+
