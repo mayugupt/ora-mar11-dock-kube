@@ -1,0 +1,123 @@
+/c/Users/Dell lap/docker-workshop/mar11> docker container run -d nginx
+47d2326391f2abe21a4d3388d37f5dc6edb312001ab0e2b3debae7b4c8a6bcdd
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container ls -a | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+47d2326391f2        nginx                                                            "nginx -g 'daemon ..."   4 seconds ago       Up 3 seconds        80/tcp                                                               eloquent_lamarr
+
+/c/Users/Dell lap/docker-workshop/mar11> docker image history apache
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+b6bc0e5e77fe        8 hours ago         /bin/sh -c apk add apache2                      3.59MB  
+7a300c62ae3a        8 hours ago         /bin/sh -c apk update                           1.31MB  
+5cb3aa00f899        4 days ago          /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B      
+<missing>           4 days ago          /bin/sh -c #(nop) ADD file:88875982b0512a9...   5.53MB  
+
+/c/Users/Dell lap/docker-workshop/mar11> docker image history nginx
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+881bd08c0b08        7 days ago          /bin/sh -c #(nop)  CMD ["nginx" "-g" "daem...   0B      
+<missing>           7 days ago          /bin/sh -c #(nop)  STOPSIGNAL SIGTERM           0B      
+<missing>           7 days ago          /bin/sh -c #(nop)  EXPOSE 80                    0B      
+<missing>           7 days ago          /bin/sh -c ln -sf /dev/stdout /var/log/ngi...   22B     
+<missing>           7 days ago          /bin/sh -c set -x  && apt-get update  && a...   54MB    
+<missing>           7 days ago          /bin/sh -c #(nop)  ENV NJS_VERSION=1.15.9....   0B      
+<missing>           7 days ago          /bin/sh -c #(nop)  ENV NGINX_VERSION=1.15....   0B      
+<missing>           7 days ago          /bin/sh -c #(nop)  LABEL maintainer=NGINX ...   0B      
+<missing>           7 days ago          /bin/sh -c #(nop)  CMD ["bash"]                 0B      
+<missing>           7 days ago          /bin/sh -c #(nop) ADD file:5ea7dfe8c8bc87e...   55.3MB  
+
+/c/Users/Dell lap/docker-workshop/mar11>
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container run -d apache ping google.com
+141b601b6f6453038312ecf13a694016d736d9aca75f4a34261bf5f594d60e94
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container ls -a | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+141b601b6f64        apache                                                           "ping google.com"        4 seconds ago       Up 3 seconds                                                                             adoring_torvalds
+47d2326391f2        nginx                                                            "nginx -g 'daemon ..."   2 minutes ago       Up 2 minutes        80/tcp                                                               eloquent_lamarr
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container exec -it 141b601b6f64 sh
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container exec -it 141b601b6f64 sh
+/ # ps -ef
+PID   USER     TIME  COMMAND
+    1 root      0:00 ping google.com
+    5 root      0:00 sh
+   10 root      0:00 ps -ef
+/ # httpd
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.15. Set the 'ServerName' directive globally to suppress this message
+/ # ps -ef
+PID   USER     TIME  COMMAND
+    1 root      0:00 ping google.com
+    5 root      0:00 sh
+   12 root      0:00 httpd
+   13 apache    0:00 httpd
+   14 apache    0:00 httpd
+   15 apache    0:00 httpd
+   16 apache    0:00 httpd
+   17 apache    0:00 httpd
+   18 root      0:00 ps -ef
+/ # kill -9 12 13 14 15 16 17
+/ # ps -ef
+PID   USER     TIME  COMMAND
+    1 root      0:00 ping google.com
+    5 root      0:00 sh
+   19 root      0:00 ps -ef
+/ # httpd -D FOREGROUND
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.15. Set the 'ServerName' directive globally to suppress this message
+^C/ # exit
+
+/c/Users/Dell lap/docker-workshop/mar11>
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container run apache ping -c5 google.com
+PING google.com (172.217.160.142): 56 data bytes
+64 bytes from 172.217.160.142: seq=0 ttl=53 time=46.351 ms
+64 bytes from 172.217.160.142: seq=1 ttl=53 time=43.780 ms
+64 bytes from 172.217.160.142: seq=2 ttl=53 time=50.929 ms
+64 bytes from 172.217.160.142: seq=3 ttl=53 time=51.487 ms
+64 bytes from 172.217.160.142: seq=4 ttl=53 time=45.930 ms
+
+--- google.com ping statistics ---
+5 packets transmitted, 5 packets received, 0% packet loss
+round-trip min/avg/max = 43.780/47.695/51.487 ms
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container run -d apache ping -c5 google.com
+59d3e397f4e525f1dcdb302a7757066227f755e22ab58eb59861ec6bf2d49f9c
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container logs 59d3e397f4e52
+PING google.com (172.217.160.142): 56 data bytes
+64 bytes from 172.217.160.142: seq=0 ttl=53 time=48.272 ms
+64 bytes from 172.217.160.142: seq=1 ttl=53 time=48.751 ms
+64 bytes from 172.217.160.142: seq=2 ttl=53 time=47.484 ms
+64 bytes from 172.217.160.142: seq=3 ttl=53 time=48.982 ms
+64 bytes from 172.217.160.142: seq=4 ttl=53 time=49.322 ms
+
+--- google.com ping statistics ---
+5 packets transmitted, 5 packets received, 0% packet loss
+round-trip min/avg/max = 47.484/48.562/49.322 ms
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container prune
+WARNING! This will remove all stopped containers.
+Are you sure you want to continue? [y/N] y
+Deleted Containers:
+59d3e397f4e525f1dcdb302a7757066227f755e22ab58eb59861ec6bf2d49f9c
+9481a8a8fede895f8a92a0628af427551bff8df9dddb7d67daa98f157949cf6d
+
+Total reclaimed space: 0B
+
+/c/Users/Dell lap/docker-workshop/mar11>
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container ls  | grep -v k8s
+CONTAINER ID        IMAGE                                                            COMMAND                  CREATED             STATUS              PORTS                                                                NAMES
+141b601b6f64        apache                                                           "ping google.com"        11 minutes ago      Up 11 minutes                                                                            adoring_torvalds
+47d2326391f2        nginx                                                            "nginx -g 'daemon ..."   13 minutes ago      Up 13 minutes       80/tcp                                                               eloquent_lamarr
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container rm -f 141b601b6f64 47d2326391f2
+141b601b6f64
+47d2326391f2
+
+/c/Users/Dell lap/docker-workshop/mar11>
+
+/c/Users/Dell lap/docker-workshop/mar11> docker container run -d -p 8080:80 apache httpd -D FOREGROUND
+4d8ab8347571185f476bcbee3eb7b9dc67741b996b689c107c8661c993d5c3c0
+
+/c/Users/Dell lap/docker-workshop/mar11>
