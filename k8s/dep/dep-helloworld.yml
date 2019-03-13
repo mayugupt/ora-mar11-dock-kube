@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: helloworld-dep
+#  namespace: myspace
+spec:
+#  revisionHistoryLimit: 10
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+      - name: web
+        image: nginx:alpine
+        ports:
+        - name: nginxport
+          containerPort: 80
+#        resources:
+#          requests:
+#            cpu: 200m
+#            memory: 0.25Gi
+#      nodeSelector:
+#        boxtype: heavyspec
