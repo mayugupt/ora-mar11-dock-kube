@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: blog-ghost-dep
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: blog-ghost
+    spec:
+      containers:
+      - name: ghost
+        image: ghost:1-alpine
+        ports:
+        - name: ghost-port
+          containerPort: 2368
+        env:
+        - name: database__client
+          value: mysql
+        - name: database__connection__host
+          value: blog-db-svc
+        - name: database__connection__user
+          value: root
+        - name: database__connection__password
+          value: welcome
+        - name: database__connection__database
+          value: ghost
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog-ghost-svc
+spec:
+  ports:
+  - port: 8888
+    nodePort: 32006
+    targetPort: ghost-port
+    protocol: TCP
+  selector:
+    app: blog-ghost
+  type: NodePort

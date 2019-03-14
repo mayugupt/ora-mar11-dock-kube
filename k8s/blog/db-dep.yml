@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: blog-db-dep
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: blog-db
+    spec:
+      containers:
+      - name: db
+        image: mysql:5.7
+        ports:
+        - name: db-port
+          containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: welcome
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog-db-svc
+spec:
+  ports:
+  - port: 3306
+    targetPort: db-port
+    protocol: TCP
+  selector:
+    app: blog-db
+  type: ClusterIP
