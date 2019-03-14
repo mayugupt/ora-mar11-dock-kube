@@ -1,0 +1,846 @@
+Dell lap@Dell ~/docker-workshop/us-mar11/ora-uk-mar11-dock-kube/k8s (master)
+λ cd
+Dell lap@Dell ~
+λ cd
+Dell lap@Dell ~
+λ cd -
+/c/Users/Dell lap
+Dell lap@Dell ~
+λ pwd
+/c/Users/Dell lap
+Dell lap@Dell ~
+λ cd docker-workshop
+Dell lap@Dell ~/docker-workshop
+λ cd mar11/
+Dell lap@Dell ~/docker-workshop/mar11
+λ cd ora-mar11-dock-kube/
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ ls
+docker-command-list.docx  k8s/       running-notes-day1.txt  setup.md
+dockers-slightedge.pdf    README.md  running-notes-day2.txt
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get pods
+NAME                              READY     STATUS    RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running   0          7h
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running   0          7h
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl describe pod blog-db-dep-6955b8d844
+-4vbcz
+Name:           blog-db-dep-6955b8d844-4vbcz
+Namespace:      default
+Node:           minikube/192.168.99.100
+Start Time:     Thu, 14 Mar 2019 02:18:28 +0530
+Labels:         app=blog-db
+                pod-template-hash=2511648400
+Annotations:    <none>
+Status:         Running
+IP:             172.17.0.4
+Controlled By:  ReplicaSet/blog-db-dep-6955b8d844
+Containers:
+  db:
+    Container ID:   docker://44d004c8f08167df3eeb3025ef9662e65ad3bd897d8029529557ce3f4ce1856d
+    Image:          mysql:5.7
+    Image ID:       docker-pullable://mysql@sha256:8c15b2612051244d0a2b6ceb6f9bf82ddc0e909555c1067c098e5f935e2751a7
+    Port:           3306/TCP
+    State:          Running
+      Started:      Thu, 14 Mar 2019 02:18:30 +0530
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      MYSQL_ROOT_PASSWORD:  welcome
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-448nd (ro)
+Conditions:
+  Type           Status
+  Initialized    True
+  Ready          True
+  PodScheduled   True
+Volumes:
+  default-token-448nd:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-448nd
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     <none>
+Events:
+  Type    Reason                 Age   From               Message
+  ----    ------                 ----  ----               -------
+  Normal  SuccessfulMountVolume  34m   kubelet, minikube  MountVolume.SetUp succeeded for volume "default-token-448nd"
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get svc
+NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+blog-db-svc      ClusterIP   10.99.79.89    <none>        3306/TCP         8h
+blog-ghost-svc   NodePort    10.96.14.252   <none>        8888:32005/TCP   8h
+kubernetes       ClusterIP   10.96.0.1      <none>        443/TCP          92d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get ns
+NAME          STATUS    AGE
+default       Active    92d
+kube-public   Active    92d
+kube-system   Active    92d
+monitoring    Active    90d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get svc -n kube-system
+NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
+default-http-backend   NodePort    10.103.225.247   <none>        80:30001/TCP        92d
+heapster               ClusterIP   10.105.175.217   <none>        80/TCP              92d
+kube-dns               ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP       92d
+kubernetes-dashboard   NodePort    10.103.11.130    <none>        80:30000/TCP        92d
+metrics-server         ClusterIP   10.109.22.160    <none>        443/TCP             90d
+monitoring-grafana     NodePort    10.109.41.42     <none>        80:30002/TCP        92d
+monitoring-influxdb    ClusterIP   10.103.96.251    <none>        8083/TCP,8086/TCP   92d
+tiller-deploy          ClusterIP   10.96.170.66     <none>        44134/TCP           27d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl describe svc -n kube-system
+Name:                     default-http-backend
+Namespace:                kube-system
+Labels:                   addonmanager.kubernetes.io/mode=Reconcile
+                          app=default-http-backend
+                          kubernetes.io/minikube-addons=ingress
+                          kubernetes.io/minikube-addons-endpoint=ingress
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","app":"default-http-backend","...
+Selector:                 app=default-http-backend
+Type:                     NodePort
+IP:                       10.103.225.247
+Port:                     <unset>  80/TCP
+TargetPort:               8080/TCP
+NodePort:                 <unset>  30001/TCP
+Endpoints:                172.17.0.10:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+
+
+Name:              heapster
+Namespace:         kube-system
+Labels:            addonmanager.kubernetes.io/mode=Reconcile
+                   kubernetes.io/minikube-addons=heapster
+                   kubernetes.io/name=heapster
+Annotations:       kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","kubernetes.io/minikube-addons...
+Selector:          addonmanager.kubernetes.io/mode=Reconcile,k8s-app=heapster
+Type:              ClusterIP
+IP:                10.105.175.217
+Port:              <unset>  80/TCP
+TargetPort:        8082/TCP
+Endpoints:         172.17.0.18:8082
+Session Affinity:  None
+Events:            <none>
+
+
+Name:              kube-dns
+Namespace:         kube-system
+Labels:            addonmanager.kubernetes.io/mode=Reconcile
+                   k8s-app=kube-dns
+                   kubernetes.io/name=KubeDNS
+Annotations:       kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","k8s-app":"kube-dns","kubernet...
+Selector:          k8s-app=kube-dns
+Type:              ClusterIP
+IP:                10.96.0.10
+Port:              dns  53/UDP
+TargetPort:        53/UDP
+Endpoints:         172.17.0.5:53
+Port:              dns-tcp  53/TCP
+TargetPort:        53/TCP
+Endpoints:         172.17.0.5:53
+Session Affinity:  None
+Events:            <none>
+
+
+Name:                     kubernetes-dashboard
+Namespace:                kube-system
+Labels:                   addonmanager.kubernetes.io/mode=Reconcile
+                          app=kubernetes-dashboard
+                          kubernetes.io/minikube-addons=dashboard
+                          kubernetes.io/minikube-addons-endpoint=dashboard
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","app":"kubernetes-dashboard","...
+Selector:                 app=kubernetes-dashboard
+Type:                     NodePort
+IP:                       10.103.11.130
+Port:                     <unset>  80/TCP
+TargetPort:               9090/TCP
+NodePort:                 <unset>  30000/TCP
+Endpoints:                172.17.0.8:9090
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+
+
+Name:              metrics-server
+Namespace:         kube-system
+Labels:            kubernetes.io/name=Metrics-server
+Annotations:       <none>
+Selector:          k8s-app=metrics-server
+Type:              ClusterIP
+IP:                10.109.22.160
+Port:              <unset>  443/TCP
+TargetPort:        443/TCP
+Endpoints:         172.17.0.6:443
+Session Affinity:  None
+Events:            <none>
+
+
+Name:                     monitoring-grafana
+Namespace:                kube-system
+Labels:                   addonmanager.kubernetes.io/mode=Reconcile
+                          kubernetes.io/minikube-addons=heapster
+                          kubernetes.io/minikube-addons-endpoint=heapster
+                          kubernetes.io/name=monitoring-grafana
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","kubernetes.io/minikube-addons...
+Selector:                 addonmanager.kubernetes.io/mode=Reconcile,k8s-app=influx-grafana
+Type:                     NodePort
+IP:                       10.109.41.42
+Port:                     <unset>  80/TCP
+TargetPort:               ui/TCP
+NodePort:                 <unset>  30002/TCP
+Endpoints:                172.17.0.14:3000
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+
+
+Name:              monitoring-influxdb
+Namespace:         kube-system
+Labels:            addonmanager.kubernetes.io/mode=Reconcile
+                   kubernetes.io/minikube-addons=heapster
+                   kubernetes.io/name=monitoring-influxdb
+Annotations:       kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","kubernetes.io/minikube-addons...
+Selector:          addonmanager.kubernetes.io/mode=Reconcile,k8s-app=influx-grafana
+Type:              ClusterIP
+IP:                10.103.96.251
+Port:              http  8083/TCP
+TargetPort:        8083/TCP
+Endpoints:         172.17.0.14:8083
+Port:              api  8086/TCP
+TargetPort:        8086/TCP
+Endpoints:         172.17.0.14:8086
+Session Affinity:  None
+Events:            <none>
+
+
+Name:              tiller-deploy
+Namespace:         kube-system
+Labels:            app=helm
+                   name=tiller
+Annotations:       <none>
+Selector:          app=helm,name=tiller
+Type:              ClusterIP
+IP:                10.96.170.66
+Port:              tiller  44134/TCP
+TargetPort:        tiller/TCP
+Endpoints:         172.17.0.16:44134
+Session Affinity:  None
+Events:            <none>
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl describe svc kube-dns -n kube-syste
+m
+Name:              kube-dns
+Namespace:         kube-system
+Labels:            addonmanager.kubernetes.io/mode=Reconcile
+                   k8s-app=kube-dns
+                   kubernetes.io/name=KubeDNS
+Annotations:       kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","k8s-app":"kube-dns","kubernet...
+Selector:          k8s-app=kube-dns
+Type:              ClusterIP
+IP:                10.96.0.10
+Port:              dns  53/UDP
+TargetPort:        53/UDP
+Endpoints:         172.17.0.5:53
+Port:              dns-tcp  53/TCP
+TargetPort:        53/TCP
+Endpoints:         172.17.0.5:53
+Session Affinity:  None
+Events:            <none>
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get pods -o wide
+NAME                              READY     STATUS    RESTARTS   AGE       IP           NODE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running   0          8h        172.17.0.4   minikube
+
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running   0          8h        172.17.0.9   minikube
+
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get pods -o wide -n kube-system
+NAME                                    READY     STATUS    RESTARTS   AGE       IP
+  NODE
+default-http-backend-cvzhd              1/1       Running   51         28d       172.17.0.10
+  minikube
+heapster-546c9964c6-2w8ld               1/1       Running   23         28d       172.17.0.7
+  minikube
+heapster-xnbjb                          1/1       Running   23         28d       172.17.0.18
+  minikube
+influxdb-grafana-tx55c                  2/2       Running   48         28d       172.17.0.14
+  minikube
+kube-addon-manager-minikube             1/1       Running   27         92d       192.168.99.100
+  minikube
+kube-dns-54cccfbdf8-f5fbr               3/3       Running   78         28d       172.17.0.5
+  minikube
+kubernetes-dashboard-77d8b98585-9cffv   1/1       Running   37         28d       172.17.0.8
+  minikube
+metrics-server-bb9ffc6b8-c4bsh          1/1       Running   26         28d       172.17.0.6
+  minikube
+monitoring-grafana-65757b9656-h4fbs     1/1       Running   23         28d       172.17.0.12
+  minikube
+monitoring-influxdb-66946c9f58-h5lhw    1/1       Running   24         28d       172.17.0.13
+  minikube
+nginx-ingress-controller-zjd74          1/1       Running   160        28d       172.17.0.3
+  minikube
+tiller-deploy-5b7c59888b-6rbgl          1/1       Running   59         12d       172.17.0.16
+  minikube
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get deploy -n kube-system
+NAME                   DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+heapster               1         1         1            1           90d
+kube-dns               1         1         1            1           92d
+kubernetes-dashboard   1         1         1            1           92d
+metrics-server         1         1         1            1           90d
+monitoring-grafana     1         1         1            1           90d
+monitoring-influxdb    1         1         1            1           90d
+tiller-deploy          1         1         1            1           12d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get ns
+NAME          STATUS    AGE
+default       Active    92d
+kube-public   Active    92d
+kube-system   Active    92d
+monitoring    Active    90d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl scale deploy kube-dns -n kube-syste
+m --replicas 2
+deployment "kube-dns" scaled
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get pods -n kube-system
+NAME                                    READY     STATUS    RESTARTS   AGE
+default-http-backend-cvzhd              1/1       Running   51         28d
+heapster-546c9964c6-2w8ld               1/1       Running   23         28d
+heapster-xnbjb                          1/1       Running   23         28d
+influxdb-grafana-tx55c                  2/2       Running   48         28d
+kube-addon-manager-minikube             1/1       Running   27         92d
+kube-dns-54cccfbdf8-f5fbr               3/3       Running   78         28d
+kube-dns-54cccfbdf8-xtspq               2/3       Running   0          9s
+kubernetes-dashboard-77d8b98585-9cffv   1/1       Running   37         28d
+metrics-server-bb9ffc6b8-c4bsh          1/1       Running   26         28d
+monitoring-grafana-65757b9656-h4fbs     1/1       Running   23         28d
+monitoring-influxdb-66946c9f58-h5lhw    1/1       Running   24         28d
+nginx-ingress-controller-zjd74          1/1       Running   160        28d
+tiller-deploy-5b7c59888b-6rbgl          1/1       Running   59         12d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl describe svc kube-dns -n kube-syste
+m
+Name:              kube-dns
+Namespace:         kube-system
+Labels:            addonmanager.kubernetes.io/mode=Reconcile
+                   k8s-app=kube-dns
+                   kubernetes.io/name=KubeDNS
+Annotations:       kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","k8s-app":"kube-dns","kubernet...
+Selector:          k8s-app=kube-dns
+Type:              ClusterIP
+IP:                10.96.0.10
+Port:              dns  53/UDP
+TargetPort:        53/UDP
+Endpoints:         172.17.0.5:53
+Port:              dns-tcp  53/TCP
+TargetPort:        53/TCP
+Endpoints:         172.17.0.5:53
+Session Affinity:  None
+Events:            <none>
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl describe pod -n kube-system kube-dn
+s-54cccfbdf8-f5fbr
+Name:           kube-dns-54cccfbdf8-f5fbr
+Namespace:      kube-system
+Node:           minikube/192.168.99.100
+Start Time:     Wed, 13 Feb 2019 19:13:52 +0530
+Labels:         k8s-app=kube-dns
+                pod-template-hash=1077796894
+Annotations:    scheduler.alpha.kubernetes.io/critical-pod=
+Status:         Running
+IP:             172.17.0.5
+Controlled By:  ReplicaSet/kube-dns-54cccfbdf8
+Containers:
+  kubedns:
+    Container ID:  docker://40ed30f9679379b3dd6132cbcddb5267f36336c92f8c069625d328a346312602
+    Image:         k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.5
+    Image ID:      docker-pullable://k8s.gcr.io/k8s-dns-kube-dns-amd64@sha256:1a3fc069de481ae690188f6f1ba4664b5cc7760af37120f70c86505c79eea61d
+    Ports:         10053/UDP, 10053/TCP, 10055/TCP
+    Args:
+      --domain=cluster.local.
+      --dns-port=10053
+      --config-map=kube-dns
+      --v=2
+    State:          Running
+      Started:      Wed, 13 Mar 2019 15:50:49 +0530
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    137
+      Started:      Wed, 13 Mar 2019 14:15:44 +0530
+      Finished:     Wed, 13 Mar 2019 15:28:10 +0530
+    Ready:          True
+    Restart Count:  26
+    Limits:
+      memory:  170Mi
+    Requests:
+      cpu:      100m
+      memory:   70Mi
+    Liveness:   http-get http://:10054/healthcheck/kubedns delay=60s timeout=5s period=10s #success=1 #failure=5
+    Readiness:  http-get http://:8081/readiness delay=3s timeout=5s period=10s #success=1 #failure=3
+    Environment:
+      PROMETHEUS_PORT:  10055
+    Mounts:
+      /kube-dns-config from kube-dns-config (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-vl5qg (ro)
+  dnsmasq:
+    Container ID:  docker://9dcda4f0b620a9ea47dcadd790c73e674a13d784c44c2ba13d86a3f4a75baf08
+    Image:         k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64:1.14.5
+    Image ID:      docker-pullable://k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64@sha256:46b933bb70270c8a02fa6b6f87d440f6f1fce1a5a2a719e164f83f7b109f7544
+    Ports:         53/UDP, 53/TCP
+    Args:
+      -v=2
+      -logtostderr
+      -configDir=/etc/k8s/dns/dnsmasq-nanny
+      -restartDnsmasq=true
+      --
+      -k
+      --cache-size=1000
+      --log-facility=-
+      --server=/cluster.local/127.0.0.1#10053
+      --server=/in-addr.arpa/127.0.0.1#10053
+      --server=/ip6.arpa/127.0.0.1#10053
+    State:          Running
+      Started:      Wed, 13 Mar 2019 15:50:51 +0530
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    137
+      Started:      Wed, 13 Mar 2019 14:16:02 +0530
+      Finished:     Wed, 13 Mar 2019 15:28:10 +0530
+    Ready:          True
+    Restart Count:  25
+    Requests:
+      cpu:        150m
+      memory:     20Mi
+    Liveness:     http-get http://:10054/healthcheck/dnsmasq delay=60s timeout=5s period=10s #success=1 #failure=5
+    Environment:  <none>
+    Mounts:
+      /etc/k8s/dns/dnsmasq-nanny from kube-dns-config (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-vl5qg (ro)
+  sidecar:
+    Container ID:  docker://fa2c23b47aeb48b4eec609da3fb84a0fc5cfc73d0a572c9e4821d8b0df19b32a
+    Image:         k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.5
+    Image ID:      docker-pullable://k8s.gcr.io/k8s-dns-sidecar-amd64@sha256:9aab42bf6a2a068b797fe7d91a5d8d915b10dbbc3d6f2b10492848debfba6044
+    Port:          10054/TCP
+    Args:
+      --v=2
+      --logtostderr
+      --probe=kubedns,127.0.0.1:10053,kubernetes.default.svc.cluster.local.,5,A
+      --probe=dnsmasq,127.0.0.1:53,kubernetes.default.svc.cluster.local.,5,A
+    State:          Running
+      Started:      Wed, 13 Mar 2019 15:50:56 +0530
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    2
+      Started:      Wed, 13 Mar 2019 14:16:44 +0530
+      Finished:     Wed, 13 Mar 2019 15:28:01 +0530
+    Ready:          True
+    Restart Count:  27
+    Requests:
+      cpu:        10m
+      memory:     20Mi
+    Liveness:     http-get http://:10054/metrics delay=60s timeout=5s period=10s #success=1 #failure=5
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-vl5qg (ro)
+Conditions:
+  Type           Status
+  Initialized    True
+  Ready          True
+  PodScheduled   True
+Volumes:
+  kube-dns-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      kube-dns
+    Optional:  true
+  default-token-vl5qg:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-vl5qg
+    Optional:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     CriticalAddonsOnly
+Events:          <none>
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get rs -n kube-system
+NAME                              DESIRED   CURRENT   READY     AGE
+heapster-546c9964c6               1         1         1         90d
+kube-dns-54cccfbdf8               1         1         1         92d
+kubernetes-dashboard-77d8b98585   1         1         1         92d
+metrics-server-bb9ffc6b8          1         1         1         90d
+monitoring-grafana-65757b9656     1         1         1         90d
+monitoring-influxdb-66946c9f58    1         1         1         90d
+tiller-deploy-5b7c59888b          1         1         1         12d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get pods -n kube-system
+NAME                                    READY     STATUS    RESTARTS   AGE
+default-http-backend-cvzhd              1/1       Running   51         28d
+heapster-546c9964c6-2w8ld               1/1       Running   23         28d
+heapster-xnbjb                          1/1       Running   23         28d
+influxdb-grafana-tx55c                  2/2       Running   48         28d
+kube-addon-manager-minikube             1/1       Running   27         92d
+kube-dns-54cccfbdf8-f5fbr               3/3       Running   78         28d
+kubernetes-dashboard-77d8b98585-9cffv   1/1       Running   37         28d
+metrics-server-bb9ffc6b8-c4bsh          1/1       Running   26         28d
+monitoring-grafana-65757b9656-h4fbs     1/1       Running   23         28d
+monitoring-influxdb-66946c9f58-h5lhw    1/1       Running   24         28d
+nginx-ingress-controller-zjd74          1/1       Running   160        28d
+tiller-deploy-5b7c59888b-6rbgl          1/1       Running   59         12d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ kubectl get deploy -n kube-system
+NAME                   DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+heapster               1         1         1            1           90d
+kube-dns               1         1         1            1           92d
+kubernetes-dashboard   1         1         1            1           92d
+metrics-server         1         1         1            1           90d
+monitoring-grafana     1         1         1            1           90d
+monitoring-influxdb    1         1         1            1           90d
+tiller-deploy          1         1         1            1           12d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ git pull
+Already up to date.
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ git pull
+remote: Enumerating objects: 22, done.
+remote: Counting objects: 100% (22/22), done.
+remote: Compressing objects: 100% (19/19), done.
+remote: Total 20 (delta 4), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (20/20), done.
+From https://github.com/AdityaSP/ora-mar11-dock-kube
+   798f98c..a375732  master     -> origin/master
+Updating 798f98c..a375732
+Fast-forward
+ k8s/autoscaling/pod-scale.yml                   | 48 ++++++++++++++++
+ k8s/heapster/grafana.yaml                       | 74 +++++++++++++++++++++++++
+ k8s/heapster/heapster.yaml                      | 46 +++++++++++++++
+ k8s/heapster/influxdb.yaml                      | 40 +++++++++++++
+ k8s/metricserver/auth-delegator.yaml            | 13 +++++
+ k8s/metricserver/auth-reader.yaml               | 14 +++++
+ k8s/metricserver/metrics-apiservice.yaml        | 14 +++++
+ k8s/metricserver/metrics-server-deployment.yaml | 32 +++++++++++
+ k8s/metricserver/metrics-server-service.yaml    | 15 +++++
+ k8s/metricserver/resource-reader.yaml           | 38 +++++++++++++
+ k8s/pv-pvc/mysql.yml                            | 32 +++++++++++
+ k8s/pv-pvc/pv.yml                               | 14 +++++
+ k8s/pv-pvc/pvc.yml                              | 11 ++++
+ 13 files changed, 391 insertions(+)
+ create mode 100644 k8s/autoscaling/pod-scale.yml
+ create mode 100644 k8s/heapster/grafana.yaml
+ create mode 100644 k8s/heapster/heapster.yaml
+ create mode 100644 k8s/heapster/influxdb.yaml
+ create mode 100644 k8s/metricserver/auth-delegator.yaml
+ create mode 100644 k8s/metricserver/auth-reader.yaml
+ create mode 100644 k8s/metricserver/metrics-apiservice.yaml
+ create mode 100644 k8s/metricserver/metrics-server-deployment.yaml
+ create mode 100644 k8s/metricserver/metrics-server-service.yaml
+ create mode 100644 k8s/metricserver/resource-reader.yaml
+ create mode 100644 k8s/pv-pvc/mysql.yml
+ create mode 100644 k8s/pv-pvc/pv.yml
+ create mode 100644 k8s/pv-pvc/pvc.yml
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ git pull
+Already up to date.
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ ls
+docker-command-list.docx  k8s/       running-notes-day1.txt  setup.md
+dockers-slightedge.pdf    README.md  running-notes-day2.txt
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube (master)
+λ cd k8s
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ ls
+autoscaling/  blog.txt  heapster/      pod/     rc/        service/
+blog/         dep/      metricserver/  pv-pvc/  readme.md
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ git pull
+Already up to date.
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ ls
+autoscaling/  blog.txt  heapster/      pod/     rc/        service/
+blog/         dep/      metricserver/  pv-pvc/  readme.md
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ cd heapster/
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s/heapster (master)
+λ ls
+grafana.yaml  heapster.yaml  influxdb.yaml
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s/heapster (master)
+λ kubectl apply -f .
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
+deployment "monitoring-grafana" configured
+service "monitoring-grafana" configured
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
+serviceaccount "heapster" configured
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
+deployment "heapster" configured
+service "heapster" configured
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
+deployment "monitoring-influxdb" configured
+service "monitoring-influxdb" configured
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s/heapster (master)
+λ cd ../metricserver/
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s/metricserver (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s/metricserver (master)
+λ kubectl get pods -n kube-system
+NAME                                    READY     STATUS    RESTARTS   AGE
+default-http-backend-cvzhd              1/1       Running   51         28d
+heapster-546c9964c6-2w8ld               1/1       Running   23         28d
+heapster-xnbjb                          1/1       Running   23         28d
+influxdb-grafana-tx55c                  2/2       Running   48         28d
+kube-addon-manager-minikube             1/1       Running   27         92d
+kube-dns-54cccfbdf8-f5fbr               3/3       Running   78         28d
+kubernetes-dashboard-77d8b98585-9cffv   1/1       Running   37         28d
+metrics-server-bb9ffc6b8-c4bsh          1/1       Running   26         28d
+monitoring-grafana-65757b9656-h4fbs     1/1       Running   23         28d
+monitoring-influxdb-66946c9f58-h5lhw    1/1       Running   24         28d
+nginx-ingress-controller-zjd74          1/1       Running   160        28d
+tiller-deploy-5b7c59888b-6rbgl          1/1       Running   59         12d
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s/metricserver (master)
+λ kubectl api-versions
+admissionregistration.k8s.io/v1alpha1
+admissionregistration.k8s.io/v1beta1
+apiextensions.k8s.io/v1beta1
+apiregistration.k8s.io/v1beta1
+apps/v1
+apps/v1beta1
+apps/v1beta2
+authentication.k8s.io/v1
+authentication.k8s.io/v1beta1
+authorization.k8s.io/v1
+authorization.k8s.io/v1beta1
+autoscaling/v1
+autoscaling/v2beta1
+batch/v1
+batch/v1beta1
+batch/v2alpha1
+certificates.k8s.io/v1beta1
+events.k8s.io/v1beta1
+extensions/v1beta1
+metrics.k8s.io/v1beta1
+networking.k8s.io/v1
+policy/v1beta1
+rbac.authorization.k8s.io/v1
+rbac.authorization.k8s.io/v1alpha1
+rbac.authorization.k8s.io/v1beta1
+scheduling.k8s.io/v1alpha1
+settings.k8s.io/v1alpha1
+storage.k8s.io/v1
+storage.k8s.io/v1alpha1
+storage.k8s.io/v1beta1
+v1
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s/metricserver (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s/metricserver (master)
+λ cd ..
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ ls
+autoscaling/  blog.txt  heapster/      pod/     rc/        service/
+blog/         dep/      metricserver/  pv-pvc/  readme.md
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl apply  -f  autoscaling/pod-scale.ym
+l
+deployment "hpa-example" created
+service "hpa-example" created
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
+horizontalpodautoscaler "hpa-example-autoscaler" configured
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl delete -f autoscaling/pod-scale.yml
+
+deployment "hpa-example" deleted
+service "hpa-example" deleted
+horizontalpodautoscaler "hpa-example-autoscaler" deleted
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl apply  -f  autoscaling/pod-scale.ym
+l
+deployment "hpa-example" created
+service "hpa-example" created
+horizontalpodautoscaler "hpa-example-autoscaler" created
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS              RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running             0          10h
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running             0          10h
+hpa-example-797dfdbc87-brlgh      0/1       ContainerCreating   0          9s
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS              RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running             0          10h
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running             0          10h
+hpa-example-797dfdbc87-brlgh      0/1       ContainerCreating   0          19s
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS              RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running             0          10h
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running             0          10h
+hpa-example-797dfdbc87-brlgh      0/1       ContainerCreating   0          37s
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS         RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running        0          10h
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running        0          10h
+hpa-example-797dfdbc87-brlgh      0/1       ErrImagePull   0          58s
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ ping google.com
+
+Pinging google.com [2404:6800:4007:809::200e] with 32 bytes of data:
+Reply from 2404:6800:4007:809::200e: time=29ms
+
+Ping statistics for 2404:6800:4007:809::200e:
+    Packets: Sent = 1, Received = 1, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 29ms, Maximum = 29ms, Average = 29ms
+Control-C
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ minikube stop
+There is a newer version of minikube available (v0.35.0).  Download it here:
+https://github.com/kubernetes/minikube/releases/tag/v0.35.0
+
+To disable this notification, run the following:
+minikube config set WantUpdateNotification false
+Stopping local Kubernetes cluster...
+Machine stopped.
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ minikube start
+Starting local Kubernetes v1.9.0 cluster...
+Starting VM...
+Getting VM IP address...
+Moving files into cluster...
+Setting up certs...
+Connecting to cluster...
+Setting up kubeconfig...
+Starting cluster components...
+Kubectl is now configured to use the cluster.
+Loading cached images from config file.
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS           MINPODS   MAXPODS   REPLICAS
+   AGE
+hpa-example-autoscaler   Deployment/hpa-example   <unknown> / 75%   1         10        1
+   6m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ minikube ip
+192.168.99.101
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS              RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running             1          10h
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running             1          10h
+hpa-example-797dfdbc87-brlgh      0/1       ContainerCreating   0          6m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS              RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running             1          10h
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running             1          10h
+hpa-example-797dfdbc87-brlgh      0/1       ContainerCreating   0          7m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS              RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running             1          10h
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running             1          10h
+hpa-example-797dfdbc87-brlgh      0/1       ContainerCreating   0          7m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS              RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running             1          10h
+blog-ghost-dep-775d87f64c-5xvb8   1/1       Running             2          10h
+hpa-example-797dfdbc87-brlgh      0/1       ContainerCreating   0          9m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS              RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running             1          10h
+blog-ghost-dep-775d87f64c-5xvb8   0/1       CrashLoopBackOff    2          10h
+hpa-example-797dfdbc87-brlgh      0/1       ContainerCreating   0          10m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get pods
+NAME                              READY     STATUS             RESTARTS   AGE
+blog-db-dep-6955b8d844-4vbcz      1/1       Running            1          10h
+blog-ghost-dep-775d87f64c-5xvb8   0/1       CrashLoopBackOff   2          10h
+hpa-example-797dfdbc87-brlgh      1/1       Running            0          10m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kub
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hps
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS           MINPODS   MAXPODS   REPLICAS
+   AGE
+hpa-example-autoscaler   Deployment/hpa-example   <unknown> / 75%   1         10        1
+   10m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS      MINPODS   MAXPODS   REPLICAS   AGE
+hpa-example-autoscaler   Deployment/hpa-example   143% / 75%   1         10        3          14m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS      MINPODS   MAXPODS   REPLICAS   AGE
+hpa-example-autoscaler   Deployment/hpa-example   149% / 75%   1         10        3          15m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS      MINPODS   MAXPODS   REPLICAS   AGE
+hpa-example-autoscaler   Deployment/hpa-example   149% / 75%   1         10        3          16m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS      MINPODS   MAXPODS   REPLICAS   AGE
+hpa-example-autoscaler   Deployment/hpa-example   147% / 75%   1         10        3          16m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS      MINPODS   MAXPODS   REPLICAS   AGE
+hpa-example-autoscaler   Deployment/hpa-example   147% / 75%   1         10        6          17m
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS     MINPODS   MAXPODS   REPLICAS   AGE
+
+hpa-example-autoscaler   Deployment/hpa-example   74% / 75%   1         10        6          18m
+
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS     MINPODS   MAXPODS   REPLICAS   AGE
+
+hpa-example-autoscaler   Deployment/hpa-example   78% / 75%   1         10        6          19m
+
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl get hpa
+NAME                     REFERENCE                TARGETS    MINPODS   MAXPODS   REPLICAS   AGE hpa-example-autoscaler   Deployment/hpa-example   0% / 75%   1         10        1          1h
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ kubectl describe hpa hpa-example-autoscaler
+Name:                                                  hpa-example-autoscaler
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"autoscaling/v1","kind":"HorizontalPodAutoscaler","metadata":{"annotations":{},"name":"hpa-example-autoscaler","namespace":"default"},"sp...
+CreationTimestamp:                                     Thu, 14 Mar 2019 12:40:09 +0530
+Reference:                                             Deployment/hpa-example
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  0% (0) / 75%
+Min replicas:                                          1
+Max replicas:                                          10
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  the last scale time was sufficiently old as to warrant a new scale
+  ScalingActive   True    ValidMetricFound  the HPA was able to succesfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooFewReplicas    the desired replica count is increasing faster than the maximum scale rate
+Events:           <none>
+Dell lap@Dell ~/docker-workshop/mar11/ora-mar11-dock-kube/k8s (master)
+λ
