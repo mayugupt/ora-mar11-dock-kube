@@ -1,0 +1,60 @@
+
+Outside of minikube(cluster) windows
+
+1. curl 192.168.99.100:31001
+<html><body><h1>It works!</h1></body></html>
+
+from with in minikube VM ( inside of my cluster):
+
+curl 192.168.99.100:31001
+<html><body><h1>It works!</h1></body></html>
+
+curl localhost:31001
+<html><body><h1>It works!</h1></body></html>
+
+curl 127.0.0.1:31001
+<html><body><h1>It works!</h1></body></html>
+
+curl 10.107.126.236:8888
+<html><body><h1>It works!</h1></body></html>
+
+curl 172.17.0.11:80
+<html><body><h1>It works!</h1></body></html>
+
+curl hw-svc:8888
+curl: (6) Could not resolve host: hw-svc
+
+FROM within POD /container
+/ # curl 192.168.99.100:31001
+<html><body><h1>It works!</h1></body></html>
+
+curl localhost:80
+<html><body><h1>It works!</h1></body></html>
+
+/ # curl 10.107.126.236:8888
+<html><body><h1>It works!</h1></body></html>
+
+ # curl 172.17.0.4:80
+<html><body><h1>It works!</h1></body></html>
+
+curl hw-svc:8888
+<html><body><h1>It works!</h1></body></html>
+-----------------------------------------------------------------------
+
+
+
+1. from pod db-svc:8888
+    1.1 initiates a connection to dns (/etc/resolv.conf) -> 10.96.0.10
+        1.1.1 pod doesnt know 10.96.0.10 fwd to parent 192.168.99.100
+        1.1.2 192.168.99.100 it "would have" fwd to outside
+        1.1.3 mesh n/w inflight-snagging and redirects Cluster IP to kubeproxy
+        1.1.4 kubeproxy will reverselookup and loadbalance to DNS POD 172.17.0.5
+        1.1.5 POD to POD communication 172.17.0.5 will reply back with ip for db-svc ie 10.96.107.37
+2. initiates connection to 10.96.107.37:8888
+     2.1 initiates a connection 10.96.107.37:8888
+        2.1.1 pod doesnt know 10.96.107.37 fwd to parent 192.168.99.100
+        1.1.2 192.168.99.100 it "would have" fwd to outside
+        1.1.3 mesh n/w inflight-snagging and redirects Cluster IP to kubeproxy
+        1.1.4 kubeproxy will reverselookup and loadbalance to db POD 172.17.0.9
+        1.1.5 POD to POD communication 172.17.0.9 will reach out to the POD
+        
