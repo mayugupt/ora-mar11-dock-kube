@@ -19,7 +19,7 @@ usermod -aG docker jenkins
 chmod 777 /var/run/docker.sock
 
 6. copy kubectl config files
-cp ~/.kube ~jenkins/.kube
+cp -r ~/.kube ~jenkins/.kube
 chown -R jenkins ~jenkins/.kube
 
 7. configure docker credentials @ jenkins --> name the credential as 'dockerhubcred'
