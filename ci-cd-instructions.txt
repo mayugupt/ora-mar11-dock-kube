@@ -22,8 +22,14 @@ chmod 777 /var/run/docker.sock
 cp ~/.kube ~jenkins/.kube
 chown -R jenkins ~jenkins/.kube
 
-7. configure docker credentials @ jenkins
+7. configure docker credentials @ jenkins --> name the credential as 'dockerhubcred'
 
-8. configure https://github.com/AdityaSP/docker-devops as pipeline project
+9. login to github and fork repo https://github.com/AdityaSP/docker-devops
 
-9. trigger the build
+11. Change adityaprabhakara/trial in Jenkinsfile to <your dockerhub id>/trail
+
+12. Change adityaprabhakara/trial in dep.yml to <your dockerhub id>/trial 
+
+13. create a pipeline project in jenkins and configure https://github.com/<YOUR GITHUB ID>/docker-devops as pipeline project
+
+14. trigger the build
